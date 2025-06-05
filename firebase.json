@@ -11,7 +11,6 @@
         "source": "**",
         "destination": "/index.html"
       }
-<<<<<<< HEAD
     ],
     "headers": [
       {
@@ -77,27 +76,5 @@
       "enabled": true
     },
     "singleProjectMode": true
-  }
-}
-
-=======
-    ]
-  }
-}
->>>>>>> 9ea5b5e1357355eaa44297a121431e4c6c5f64d4
-{
-  "hosting": {
-    "public": "dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
   }
 }
