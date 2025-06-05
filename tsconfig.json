@@ -5,24 +5,23 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-<<<<<<< HEAD
-=======
     "esModuleInterop": true,
-
-    /* Bundler mode */
->>>>>>> 9ea5b5e1357355eaa44297a121431e4c6c5f64d4
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-<<<<<<< HEAD
+
+    /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Paths */
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -41,16 +40,6 @@
       "@router/*": ["src/router/*"],
       "@layouts/*": ["src/layouts/*"]
     }
-=======
-
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
->>>>>>> 9ea5b5e1357355eaa44297a121431e4c6c5f64d4
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
