@@ -1,19 +1,12 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-<<<<<<< HEAD
-  readonly VITE_AI_ASSISTANT_ENDPOINT: string
-  readonly VITE_AI_ASSISTANT_API_KEY: string
-  readonly VITE_API_BASE_URL: string
-  readonly VITE_APP_TITLE: string
-  readonly VITE_APP_VERSION: string
-}
+  readonly VITE_AI_ASSISTANT_ENDPOINT: string;
+  readonly VITE_AI_ASSISTANT_API_KEY: string;
+  readonly VITE_API_BASE_URL: string;
+  readonly VITE_APP_TITLE: string;
+  readonly VITE_APP_VERSION: string;
 
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}
-
-=======
   readonly VITE_FIREBASE_API_KEY: string;
   readonly VITE_FIREBASE_AUTH_DOMAIN: string;
   readonly VITE_FIREBASE_PROJECT_ID: string;
@@ -25,4 +18,3 @@ interface ImportMeta {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
->>>>>>> 9ea5b5e1357355eaa44297a121431e4c6c5f64d4
