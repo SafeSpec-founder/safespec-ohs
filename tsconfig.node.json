@@ -1,14 +1,13 @@
 {
-<<<<<<< HEAD
-=======
   "name": "tsconfig.node.json",
->>>>>>> 9ea5b5e1357355eaa44297a121431e4c6c5f64d4
   "compilerOptions": {
     "composite": true,
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true
   },
   "include": ["vite.config.ts"]
 }
