@@ -10,14 +10,14 @@ on:
       - main
 
 env:
-  NODE_VERSION: '18'
-  FIREBASE_PROJECT_ID: 'safespec-ohs'
+  NODE_VERSION: "18"
+  FIREBASE_PROJECT_ID: "safespec-ohs"
 
 jobs:
   test:
     runs-on: ubuntu-latest
     name: Run Tests
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install frontend dependencies
         run: npm ci
@@ -65,7 +65,7 @@ jobs:
     name: Deploy to Staging
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -74,7 +74,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -103,8 +103,8 @@ jobs:
       - name: Deploy to Firebase Staging
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_STAGING }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_STAGING }}"
           projectId: ${{ env.FIREBASE_PROJECT_ID }}
           channelId: staging
         env:
@@ -123,7 +123,7 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/production' && github.event_name == 'push'
     environment: production
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -132,7 +132,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -161,8 +161,8 @@ jobs:
       - name: Deploy to Firebase Production
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRODUCTION }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRODUCTION }}"
           projectId: ${{ env.FIREBASE_PROJECT_ID }}
           channelId: live
         env:
@@ -184,7 +184,7 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
     name: Security Scan
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -192,16 +192,16 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
       - name: Run npm audit
         run: |
@@ -213,7 +213,7 @@ jobs:
     name: Performance Test
     needs: deploy-staging
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -238,14 +238,14 @@ jobs:
     name: Notify Deployment Status
     needs: [deploy-staging, deploy-production]
     if: always()
-    
+
     steps:
       - name: Notify Slack on Success
         if: needs.deploy-staging.result == 'success' || needs.deploy-production.result == 'success'
         uses: 8398a7/action-slack@v3
         with:
           status: success
-          text: 'SafeSpec OHS deployment successful! 🚀'
+          text: "SafeSpec OHS deployment successful! 🚀"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
@@ -254,7 +254,6 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: failure
-          text: 'SafeSpec OHS deployment failed! ❌'
+          text: "SafeSpec OHS deployment failed! ❌"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
