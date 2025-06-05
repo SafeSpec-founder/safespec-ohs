@@ -1,0 +1,254 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isTenantMember(tenantId) {
+      return isAuthenticated() && getUserData().tenantId == tenantId;
+    }
+    
+    function hasRole(role) {
+      return isAuthenticated() && getUserData().role == role;
+    }
+    
+    function hasAnyRole(roles) {
+      return isAuthenticated() && getUserData().role in roles;
+    }
+    
+    function hasPermission(permission) {
+      return isAuthenticated() && permission in getUserData().permissions;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isActiveUser() {
+      return isAuthenticated() && getUserData().isActive == true;
+    }
+    
+    function isSuperAdmin() {
+      return hasRole('super_admin');
+    }
+    
+    function isValidFileSize(maxSizeBytes) {
+      return request.resource.size <= maxSizeBytes;
+    }
+    
+    function isValidImageType() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    function isValidDocumentType() {
+      return request.resource.contentType in [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'text/plain',
+        'text/csv',
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp'
+      ];
+    }
+    
+    // Documents storage path: documents/{tenantId}/{fileName}
+    match /documents/{tenantId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('documents.read') &&
+        isActiveUser();
+      
+      allow write: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('documents.create') &&
+        isActiveUser() &&
+        isValidDocumentType() &&
+        isValidFileSize(10 * 1024 * 1024); // 10MB limit
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('documents.delete') &&
+        isActiveUser();
+    }
+    
+    // Profile pictures storage path: profiles/{tenantId}/{userId}/{fileName}
+    match /profiles/{tenantId}/{userId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        isActiveUser();
+      
+      allow write: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        isOwner(userId) &&
+        isActiveUser() &&
+        isValidImageType() &&
+        isValidFileSize(5 * 1024 * 1024); // 5MB limit for profile pictures
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        (isOwner(userId) || hasAnyRole(['admin', 'super_admin'])) &&
+        isActiveUser();
+    }
+    
+    // Incident attachments storage path: incidents/{tenantId}/{incidentId}/{fileName}
+    match /incidents/{tenantId}/{incidentId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('incidents.read') &&
+        isActiveUser();
+      
+      allow write: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('incidents.create') &&
+        isActiveUser() &&
+        isValidDocumentType() &&
+        isValidFileSize(25 * 1024 * 1024); // 25MB limit for incident attachments
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('incidents.update') &&
+        isActiveUser();
+    }
+    
+    // Audit attachments storage path: audits/{tenantId}/{auditId}/{fileName}
+    match /audits/{tenantId}/{auditId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('audits.read') &&
+        isActiveUser();
+      
+      allow write: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('audits.create') &&
+        isActiveUser() &&
+        isValidDocumentType() &&
+        isValidFileSize(25 * 1024 * 1024); // 25MB limit
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('audits.update') &&
+        isActiveUser();
+    }
+    
+    // Corrective action attachments storage path: corrective-actions/{tenantId}/{actionId}/{fileName}
+    match /corrective-actions/{tenantId}/{actionId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('corrective_actions.read') &&
+        isActiveUser();
+      
+      allow write: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('corrective_actions.create') &&
+        isActiveUser() &&
+        isValidDocumentType() &&
+        isValidFileSize(25 * 1024 * 1024); // 25MB limit
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('corrective_actions.update') &&
+        isActiveUser();
+    }
+    
+    // Report exports storage path: reports/{tenantId}/{reportId}/{fileName}
+    match /reports/{tenantId}/{reportId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('reports.read') &&
+        isActiveUser();
+      
+      allow write: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('reports.create') &&
+        isActiveUser() &&
+        isValidFileSize(50 * 1024 * 1024); // 50MB limit for reports
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasPermission('reports.delete') &&
+        isActiveUser();
+    }
+    
+    // Temporary uploads storage path: temp/{tenantId}/{userId}/{fileName}
+    match /temp/{tenantId}/{userId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        isOwner(userId) &&
+        isActiveUser();
+      
+      allow write: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        isOwner(userId) &&
+        isActiveUser() &&
+        isValidDocumentType() &&
+        isValidFileSize(100 * 1024 * 1024); // 100MB limit for temporary uploads
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        isOwner(userId) &&
+        isActiveUser();
+    }
+    
+    // Tenant logos and branding storage path: tenants/{tenantId}/branding/{fileName}
+    match /tenants/{tenantId}/branding/{fileName} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        isActiveUser();
+      
+      allow write: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasAnyRole(['admin', 'super_admin']) &&
+        isActiveUser() &&
+        isValidImageType() &&
+        isValidFileSize(5 * 1024 * 1024); // 5MB limit for branding assets
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasAnyRole(['admin', 'super_admin']) &&
+        isActiveUser();
+    }
+    
+    // System backups and exports (admin only)
+    match /system/{tenantId}/{path=**} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasAnyRole(['admin', 'super_admin']) &&
+        isActiveUser();
+      
+      allow write: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasAnyRole(['admin', 'super_admin']) &&
+        isActiveUser();
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(tenantId) &&
+        hasAnyRole(['admin', 'super_admin']) &&
+        isActiveUser();
+    }
+    
+    // Public assets (read-only for authenticated users)
+    match /public/{path=**} {
+      allow read: if true; // Public read access
+      allow write: if isSuperAdmin(); // Only super admin can write to public
+      allow delete: if isSuperAdmin();
+    }
+    
+    // Deny all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
+

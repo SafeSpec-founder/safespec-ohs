@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+<<<<<<< HEAD
+=======
+    "esModuleInterop": true,
+
+    /* Bundler mode */
+>>>>>>> 9ea5b5e1357355eaa44297a121431e4c6c5f64d4
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+<<<<<<< HEAD
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@pages/*": ["src/pages/*"],
+      "@contexts/*": ["src/contexts/*"],
+      "@services/*": ["src/services/*"],
+      "@utils/*": ["src/utils/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@ai/*": ["src/ai/*"],
+      "@automation/*": ["src/automation/*"],
+      "@offline/*": ["src/offline/*"],
+      "@store/*": ["src/store/*"],
+      "@models/*": ["src/models/*"],
+      "@styles/*": ["src/styles/*"],
+      "@router/*": ["src/router/*"],
+      "@layouts/*": ["src/layouts/*"]
+    }
+=======
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true
+>>>>>>> 9ea5b5e1357355eaa44297a121431e4c6c5f64d4
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

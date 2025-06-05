@@ -1,0 +1,97 @@
+{
+<<<<<<< HEAD
+  "name": "safespec-ohs-application",
+=======
+  "name": "safespec-frontend",
+>>>>>>> 9ea5b5e1357355eaa44297a121431e4c6c5f64d4
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+<<<<<<< HEAD
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.0",
+    "@reduxjs/toolkit": "^1.9.5",
+    "axios": "^1.4.0",
+    "chart.js": "^4.3.0",
+    "date-fns": "^2.30.0",
+    "formik": "^2.2.9",
+    "idb": "^7.1.1",
+    "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
+    "openai": "^3.2.1",
+    "pdfjs-dist": "^3.6.172",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-pdf": "^6.2.2",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.11.1",
+    "socket.io-client": "^4.6.1",
+    "uuid": "^9.0.0",
+    "yup": "^1.1.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/lodash": "^4.14.194",
+    "@types/node": "^20.1.3",
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "@types/uuid": "^9.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.1",
+    "jsdom": "^22.0.0",
+    "typescript": "^5.8.3",
+    "vite": "^4.3.5",
+    "vite-plugin-pwa": "^0.15.0",
+    "vitest": "^0.31.0",
+    "workbox-window": "^6.5.4"
+=======
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.9",
+    "firebase": "^10.14.1",
+    "focus-trap-react": "^10.3.1",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@types/uuid": "^9.0.7",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "typescript": "^5.8.3",
+    "vite": "^5.0.8",
+    "vite-plugin-pwa": "^0.17.5"
+>>>>>>> 9ea5b5e1357355eaa44297a121431e4c6c5f64d4
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "name": "SafeSpec OHS Application",
+  "short_name": "SafeSpec",
+  "description": "Occupational Health and Safety Management System",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2",
+  "icons": [
+    {
+      "src": "pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "orientation": "any",
+  "categories": ["business", "productivity", "safety"],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your safety dashboard",
+      "url": "/dashboard",
+      "icons": [{ "src": "shortcuts/dashboard.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Report Incident",
+      "short_name": "Incident",
+      "description": "Report a new safety incident",
+      "url": "/incidents/new",
+      "icons": [{ "src": "shortcuts/incident.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Documents",
+      "short_name": "Docs",
+      "description": "Access safety documents",
+      "url": "/documents",
+      "icons": [{ "src": "shortcuts/documents.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Dashboard view with safety metrics"
+    },
+    {
+      "src": "screenshots/incident-form.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Incident reporting form"
+    },
+    {
+      "src": "screenshots/mobile-dashboard.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Mobile dashboard view"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
