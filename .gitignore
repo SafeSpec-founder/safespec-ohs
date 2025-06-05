@@ -4,4 +4,4 @@ dist/
 build/
 *.tsbuildinfo
 .env
-package-lock.json
+
