@@ -1,0 +1,324 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - production
+    types: [opened, synchronize, reopened]
+
+env:
+  NODE_VERSION: "18"
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    name: Code Quality Checks
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Install functions dependencies
+        run: |
+          cd functions
+          npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Prettier check
+        run: npm run format:check
+
+      - name: Run TypeScript type checking
+        run: npm run type-check
+
+      - name: Run functions linting
+        run: |
+          cd functions
+          npm run lint
+
+      - name: Check for unused dependencies
+        run: npx depcheck
+
+      - name: Check bundle size
+        run: |
+          npm run build
+          npx bundlesize
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    name: Unit Tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install functions dependencies
+        run: |
+          cd functions
+          npm ci
+
+      - name: Run frontend unit tests
+        run: npm run test:unit -- --coverage
+
+      - name: Run functions unit tests
+        run: |
+          cd functions
+          npm run test -- --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info,./functions/coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    name: Integration Tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install functions dependencies
+        run: |
+          cd functions
+          npm ci
+
+      - name: Start Firebase Emulators
+        run: |
+          npm install -g firebase-tools
+          firebase emulators:start --only auth,firestore,functions,storage &
+          sleep 30
+
+      - name: Run integration tests
+        run: npm run test:integration
+        env:
+          VITE_USE_FIREBASE_EMULATORS: true
+          FIREBASE_AUTH_EMULATOR_HOST: localhost:9099
+          FIRESTORE_EMULATOR_HOST: localhost:8080
+          FIREBASE_STORAGE_EMULATOR_HOST: localhost:9199
+
+  accessibility-tests:
+    runs-on: ubuntu-latest
+    name: Accessibility Tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          VITE_FIREBASE_API_KEY: demo-key
+          VITE_FIREBASE_AUTH_DOMAIN: demo.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID: demo-project
+          VITE_FIREBASE_STORAGE_BUCKET: demo.appspot.com
+          VITE_FIREBASE_MESSAGING_SENDER_ID: 123456789
+          VITE_FIREBASE_APP_ID: demo-app-id
+
+      - name: Serve application
+        run: |
+          npm install -g serve
+          serve -s dist -l 3000 &
+          sleep 10
+
+      - name: Run accessibility tests
+        run: |
+          npm install -g @axe-core/cli
+          axe http://localhost:3000 --exit
+
+  security-checks:
+    runs-on: ubuntu-latest
+    name: Security Checks
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run npm audit
+        run: |
+          npm audit --audit-level moderate
+          cd functions && npm audit --audit-level moderate
+
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=medium
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  build-test:
+    runs-on: ubuntu-latest
+    name: Build Test
+    strategy:
+      matrix:
+        node-version: ["16", "18", "20"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install functions dependencies
+        run: |
+          cd functions
+          npm ci
+
+      - name: Build frontend
+        run: npm run build
+        env:
+          VITE_FIREBASE_API_KEY: demo-key
+          VITE_FIREBASE_AUTH_DOMAIN: demo.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID: demo-project
+          VITE_FIREBASE_STORAGE_BUCKET: demo.appspot.com
+          VITE_FIREBASE_MESSAGING_SENDER_ID: 123456789
+          VITE_FIREBASE_APP_ID: demo-app-id
+
+      - name: Build functions
+        run: |
+          cd functions
+          npm run build
+
+  pr-preview:
+    runs-on: ubuntu-latest
+    name: Deploy PR Preview
+    if: github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+
+      - name: Deploy to Firebase Preview
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_STAGING }}"
+          projectId: safespec-ohs
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
+
+  comment-pr:
+    runs-on: ubuntu-latest
+    name: Comment on PR
+    needs:
+      [
+        code-quality,
+        unit-tests,
+        integration-tests,
+        accessibility-tests,
+        security-checks,
+        build-test,
+      ]
+    if: always()
+
+    steps:
+      - name: Comment PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const results = {
+              'Code Quality': '${{ needs.code-quality.result }}',
+              'Unit Tests': '${{ needs.unit-tests.result }}',
+              'Integration Tests': '${{ needs.integration-tests.result }}',
+              'Accessibility Tests': '${{ needs.accessibility-tests.result }}',
+              'Security Checks': '${{ needs.security-checks.result }}',
+              'Build Test': '${{ needs.build-test.result }}'
+            };
+
+            let comment = '## 🔍 Pull Request Checks\n\n';
+
+            for (const [check, result] of Object.entries(results)) {
+              const emoji = result === 'success' ? '✅' : result === 'failure' ? '❌' : '⏸️';
+              comment += `${emoji} **${check}**: ${result}\n`;
+            }
+
+            const allPassed = Object.values(results).every(result => result === 'success');
+
+            if (allPassed) {
+              comment += '\n🎉 All checks passed! This PR is ready for review.';
+            } else {
+              comment += '\n⚠️ Some checks failed. Please review and fix the issues.';
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

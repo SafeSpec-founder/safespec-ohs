@@ -1,0 +1,23 @@
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "eslint.codeActionsOnSave.mode": "problems",
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "eslint.debug": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
+}
+// This file contains settings for Visual Studio Code to enable ESLint integration
+// and format code on save. It specifies the languages to validate with ESLint,
+// enables automatic fixing of issues, and sets the default formatter to ESLint.
+// The "eslint.debug" setting is enabled to help with debugging ESLint issues.
+// Make sure to install the ESLint extension in VS Code for these settings to work.

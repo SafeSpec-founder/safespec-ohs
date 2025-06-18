@@ -1,0 +1,6 @@
+dist/
+build/
+node_modules/
+assets/
+sw.js
+workbox-5ffe50d4.js

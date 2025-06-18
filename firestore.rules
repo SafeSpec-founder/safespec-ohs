@@ -1,0 +1,351 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isTenantMember(tenantId) {
+      return isAuthenticated() && getUserData().tenantId == tenantId;
+    }
+    
+    function hasRole(role) {
+      return isAuthenticated() && getUserData().role == role;
+    }
+    
+    function hasAnyRole(roles) {
+      return isAuthenticated() && getUserData().role in roles;
+    }
+    
+    function hasPermission(permission) {
+      return isAuthenticated() && permission in getUserData().permissions;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isActiveUser() {
+      return isAuthenticated() && getUserData().isActive == true;
+    }
+    
+    function isSuperAdmin() {
+      return hasRole('super_admin');
+    }
+    
+    function isAdmin() {
+      return hasAnyRole(['admin', 'super_admin']);
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null;
+      // Only super_admin and admin can delete users
+      allow delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['super_admin', 'admin'];
+    }
+    
+    // Tenants collection
+    match /tenants/{tenantId} {
+      allow read: if isAuthenticated() && (
+        isTenantMember(tenantId) ||
+        isSuperAdmin()
+      );
+      
+      allow create: if isSuperAdmin();
+      
+      allow update: if isAuthenticated() && (
+        (isTenantMember(tenantId) && hasAnyRole(['admin'])) ||
+        isSuperAdmin()
+      );
+      
+      allow delete: if isSuperAdmin();
+    }
+    
+    // Incidents collection
+    match /incidents/{incidentId} {
+      allow read: if isAuthenticated() && 
+        hasPermission('view_incidents') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        hasPermission('create_incidents') && 
+        
+        request.resource.data.tenantId == getUserData().tenantId &&
+        isActiveUser();
+      
+      allow update: if isAuthenticated() && 
+        hasPermission('edit_incidents') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+      
+      allow delete: if isAuthenticated() && 
+        hasPermission('delete_incidents') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+    }
+    
+    // Documents collection
+    match /documents/{documentId} {
+      allow read: if isAuthenticated() && 
+        hasPermission('view_documents') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser() &&
+        (
+          resource.data.accessLevel == 'public' ||
+          (resource.data.accessLevel == 'internal' && hasAnyRole(['admin', 'safety_manager', 'employee'])) ||
+          (resource.data.accessLevel == 'restricted' && hasAnyRole(['admin', 'safety_manager'])) ||
+          (resource.data.accessLevel == 'confidential' && hasAnyRole(['admin', 'safety_manager']))
+        );
+      
+      allow create: if isAuthenticated() && 
+        hasPermission('create_documents') && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        isActiveUser();
+      
+      allow update: if isAuthenticated() && 
+        hasPermission('edit_documents') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+      
+      allow delete: if isAuthenticated() && 
+        hasPermission('delete_documents') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+    }
+    
+    // Audits collection
+    match /audits/{auditId} {
+      allow read: if isAuthenticated() && 
+        hasPermission('view_audits') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        hasPermission('create_audits') && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        isActiveUser();
+      
+      allow update: if isAuthenticated() && 
+        hasPermission('edit_audits') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser() &&
+        (
+          isOwner(resource.data.createdBy) ||
+          request.auth.uid in resource.data.assignedAuditors ||
+          hasAnyRole(['admin', 'safety_manager'])
+        );
+      
+      allow delete: if isAuthenticated() && 
+        hasPermission('delete_audits') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+    }
+    
+    // Corrective Actions collection
+    match /correctiveActions/{actionId} {
+      allow read: if isAuthenticated() && 
+        hasPermission('view_corrective_actions') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        hasPermission('create_corrective_actions') && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        isActiveUser();
+      
+      allow update: if isAuthenticated() && 
+        hasPermission('edit_corrective_actions') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser() &&
+        (
+          isOwner(resource.data.createdBy) ||
+          isOwner(resource.data.assignedTo) ||
+          hasAnyRole(['admin', 'safety_manager'])
+        );
+      
+      allow delete: if isAuthenticated() && 
+        hasPermission('delete_corrective_actions') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+    }
+    
+    // Reports collection
+    match /reports/{reportId} {
+      allow read: if isAuthenticated() && 
+        hasPermission('view_reports') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        hasPermission('create_reports') && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        isActiveUser();
+      
+      allow update: if isAuthenticated() && 
+        hasPermission('edit_reports') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser() &&
+        isOwner(resource.data.generatedBy);
+      
+      allow delete: if isAuthenticated() && 
+        hasPermission('delete_reports') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser() &&
+        isOwner(resource.data.generatedBy);
+    }
+    
+    // Chat Messages collection
+    match /chatMessages/{messageId} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        isOwner(resource.data.userId) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        request.resource.data.userId == request.auth.uid &&
+        isActiveUser();
+      
+      allow update: if false; // Messages should not be updated
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        isOwner(resource.data.userId) &&
+        isActiveUser();
+    }
+    
+    // Chat Sessions collection
+    match /chatSessions/{sessionId} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        isOwner(resource.data.userId) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        request.resource.data.userId == request.auth.uid &&
+        isActiveUser();
+      
+      allow update: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        isOwner(resource.data.userId) &&
+        isActiveUser();
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        isOwner(resource.data.userId) &&
+        isActiveUser();
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        isOwner(resource.data.userId) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        isActiveUser();
+      
+      allow update: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        isOwner(resource.data.userId) &&
+        isActiveUser();
+      
+      allow delete: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        isOwner(resource.data.userId) &&
+        isActiveUser();
+    }
+    
+    // Activity Logs collection (read-only for most users)
+    match /activityLogs/{logId} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        hasAnyRole(['admin', 'safety_manager']) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        isActiveUser();
+      
+      allow update: if false; // Activity logs should not be updated
+      allow delete: if false; // Activity logs should not be deleted
+    }
+    
+    // Document Access Logs collection
+    match /documentAccess/{accessId} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        hasAnyRole(['admin', 'safety_manager']) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        isActiveUser();
+      
+      allow update: if false;
+      allow delete: if false;
+    }
+    
+    // AI Analyses collection
+    match /aiAnalyses/{analysisId} {
+      allow read: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        isActiveUser();
+      
+      allow update: if false;
+      allow delete: if isAuthenticated() && 
+        isTenantMember(resource.data.tenantId) &&
+        isOwner(resource.data.userId) &&
+        isActiveUser();
+    }
+    
+    // Report Schedules collection
+    match /reportSchedules/{scheduleId} {
+      allow read: if isAuthenticated() && 
+        hasPermission('view_reports') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser();
+      
+      allow create: if isAuthenticated() && 
+        hasPermission('create_reports') && 
+        request.resource.data.tenantId == getUserData().tenantId &&
+        isActiveUser();
+      
+      allow update: if isAuthenticated() && 
+        hasPermission('create_reports') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser() &&
+        isOwner(resource.data.createdBy);
+      
+      allow delete: if isAuthenticated() && 
+        hasPermission('delete_reports') && 
+        isTenantMember(resource.data.tenantId) &&
+        isActiveUser() &&
+        isOwner(resource.data.createdBy);
+    }
+    
+    // Refresh Tokens collection (system use only)
+    match /refreshTokens/{tokenId} {
+      allow read: if false; // Only backend should access
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}
+

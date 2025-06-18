@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "strict": true, // Enable strict mode
+    "forceConsistentCasingInFileNames": true // Ensure consistent casing across OSes
+  },
+  "include": ["src/**/*", "vite.config.ts", "coverage/**/*", ".eslintrc.cjs"]
+}

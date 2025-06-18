@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Basic App Information -->
+  <title>SafeSpec OHS - Occupational Health & Safety Management</title>
+  <meta name="description"
+    content="SafeSpec OHS is a comprehensive occupational health and safety management platform for incident reporting, compliance tracking, risk assessment, and safety analytics." />
+  <meta name="keywords"
+    content="safety management, occupational health, incident reporting, compliance, risk assessment, workplace safety, OHS, OSHA" />
+  <meta name="author" content="SafeSpec" />
+
+  <!-- PWA Theme and Colors -->
+  <meta name="theme-color" content="#1976d2" />
+  <meta name="msapplication-TileColor" content="#1976d2" />
+  <meta name="msapplication-navbutton-color" content="#1976d2" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+  <!-- PWA Configuration -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="SafeSpec OHS" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="SafeSpec OHS" />
+
+  <!-- Security Headers -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self';
+             script-src 'self' 'unsafe-inline' https://apis.google.com;
+             connect-src 'self' http://localhost:9099 http://localhost:8080 https://www.googleapis.com;
+             frame-src 'self' http://localhost:9099 https://accounts.google.com https://*.firebaseapp.com https://apis.google.com;">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SafeSpec OHS - Occupational Health & Safety Management" />
+  <meta property="og:description"
+    content="Comprehensive workplace safety management platform for incident reporting, compliance tracking, and risk assessment." />
+  <meta property="og:image" content="/logo-og.png" />
+  <meta property="og:url" content="https://safespec.app" />
+  <meta property="og:site_name" content="SafeSpec OHS" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SafeSpec OHS - Occupational Health & Safety Management" />
+  <meta name="twitter:description"
+    content="Comprehensive workplace safety management platform for incident reporting, compliance tracking, and risk assessment." />
+  <meta name="twitter:image" content="/logo-twitter.png" />
+
+  <!-- Favicons and Icons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+
+  <!-- Apple Touch Icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png" />
+  <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png" />
+  <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png" />
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Microsoft Tiles -->
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png" />
+  <meta name="msapplication-config" content="/browserconfig.xml" />
+
+  <!-- Preconnect to External Resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Critical CSS for Loading State -->
+  <style>
+    /* Critical loading styles */
+    #root {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+        "Ubuntu", "Cantarell", sans-serif;
+    }
+
+    .loading-container {
+      text-align: center;
+      color: white;
+      padding: 2rem;
+    }
+
+    .loading-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      animation: pulse 2s infinite;
+    }
+
+    .loading-text {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .loading-subtext {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 2rem;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      margin: 0 auto;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Hide loading when app loads */
+    .app-loaded #loading-screen {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- App Root -->
+  <div id="root">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-container">
+      <div class="loading-logo">SS</div>
+      <div class="loading-text">SafeSpec OHS</div>
+      <div class="loading-subtext">
+        Occupational Health & Safety Management
+      </div>
+      <div class=" loading-spinner"></div>
+    </div>
+  </div>
+
+  <!-- Environment Detection and Logging -->
+  <script>
+    // Environment detection
+    const isDevelopment =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname.includes("dev") ||
+      window.location.port !== "";
+
+    const isProduction = !isDevelopment;
+
+    // Global environment variables
+    window.__SAFESPEC_ENV__ = {
+      isDevelopment,
+      isProduction,
+      version: "1.0.0",
+      buildTime: new Date().toISOString(),
+      hostname: window.location.hostname,
+      protocol: window.location.protocol,
+    };
+
+    // Console logging based on environment
+    if (isDevelopment) {
+      console.log(
+        "%c🔧 SafeSpec OHS - Development Mode",
+        "background: #4caf50; color: white; padding: 8px 12px; border-radius: 4px; font-weight: bold;",
+      );
+      console.log("Environment:", window.__SAFESPEC_ENV__);
+      console.log("Build info:", {
+        vite: true,
+        typescript: true,
+        pwa: true,
+        mode: "development",
+      });
+    } else {
+      console.log(
+        "%c🚀 SafeSpec OHS - Production Mode",
+        "background: #1976d2; color: white; padding: 8px 12px; border-radius: 4px; font-weight: bold;",
+      );
+      console.log("Version:", window.__SAFESPEC_ENV__.version);
+    }
+
+    // Performance monitoring
+    if ("performance" in window) {
+      window.addEventListener("load", () => {
+        const loadTime = performance.now();
+        if (isDevelopment) {
+          console.log(`⚡ App loaded in ${Math.round(loadTime)}ms`);
+        }
+      });
+    }
+
+    // PWA installation prompt handling
+    let deferredPrompt;
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (isDevelopment) {
+        console.log("💾 PWA install prompt available");
+      }
+    });
+
+    // Service Worker registration
+    if ("serviceWorker" in navigator && isProduction) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((registration) => {
+            if (isDevelopment) {
+              console.log("✅ Service Worker registered:", registration);
+            }
+          })
+          .catch((error) => {
+            console.error("❌ Service Worker registration failed:", error);
+          });
+      });
+    }
+
+    // Error handling
+    window.addEventListener("error", (event) => {
+      console.error("🚨 Global error:", event.error);
+      if (isProduction) {
+        // In production, you might want to send errors to a logging service
+        // Example: sendErrorToLoggingService(event.error);
+      }
+    });
+
+    // Unhandled promise rejection handling
+    window.addEventListener("unhandledrejection", (event) => {
+      console.error("🚨 Unhandled promise rejection:", event.reason);
+      if (isProduction) {
+        // In production, you might want to send errors to a logging service
+        // Example: sendErrorToLoggingService(event.reason);
+      }
+    });
+
+    // App loading state management
+    function hideLoadingScreen() {
+      const loadingScreen = document.getElementById("loading-screen");
+      if (loadingScreen) {
+        loadingScreen.style.opacity = "0";
+        loadingScreen.style.transition = "opacity 0.3s ease-out";
+        setTimeout(() => {
+          loadingScreen.style.display = "none";
+          document.body.classList.add("app-loaded");
+        }, 300);
+      }
+    }
+
+    // Hide loading screen when React app mounts
+    window.__SAFESPEC_HIDE_LOADING__ = hideLoadingScreen;
+
+    // Fallback: Hide loading screen after 10 seconds
+    setTimeout(hideLoadingScreen, 10000);
+  </script>
+
+  <!-- Vite TypeScript Entry Point -->
+  <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Fallback for browsers without module support -->
+  <script nomodule>
+    document.getElementById("loading-screen").innerHTML =
+      '<div style="text-align: center; color: white; padding: 2rem;">' +
+      "<h2>Browser Not Supported</h2>" +
+      "<p>This application requires a modern browser with ES6 module support.</p>" +
+      "<p>Please update your browser to the latest version.</p>" +
+      "</div>";
+  </script>
+</body>
+
+</html>
