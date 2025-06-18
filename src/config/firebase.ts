@@ -3,6 +3,7 @@ import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+import { logger } from "../utils/logger";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-api-key",
@@ -35,9 +36,9 @@ if (import.meta.env.DEV) {
       connectFirestoreEmulator(db, "localhost", 8080);
       connectStorageEmulator(storage, "localhost", 9199);
       connectFunctionsEmulator(functions, "localhost", 5001);
-      console.log("Connected to Firebase emulators");
+      logger.info("Connected to Firebase emulators");
     } catch (error) {
-      console.warn("Failed to connect to Firebase emulators:", error);
+      logger.warn("Failed to connect to Firebase emulators:", error);
     }
   }
 }

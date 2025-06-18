@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../contexts/ToastContext"; // Assuming ToastContext is in components
 
@@ -123,7 +124,7 @@ const EquipmentModal: React.FC<EquipmentModalProps> = ({
     const equipmentData: Omit<Equipment, "id"> = baseData;
 
     // In a real app, handle file upload here if documentFile exists
-    console.log(
+    logger.info(
       "Saving equipment:",
       equipmentData,
       "Document File:",

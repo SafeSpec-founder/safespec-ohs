@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 // Placeholder for charting library - choose one like Recharts or Chart.js
 // import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -60,6 +63,8 @@ const EnhancedDashboard: React.FC = () => {
   const complianceExportRef = useRef<HTMLDivElement>(null);
   const incidentExportButtonRef = useRef<HTMLButtonElement>(null);
   const complianceExportButtonRef = useRef<HTMLButtonElement>(null);
+  const incidentChartRef = useRef<HTMLDivElement>(null);
+  const complianceChartRef = useRef<HTMLDivElement>(null);
 
   const [incidentExportOpen, setIncidentExportOpen] = useState(false);
   const [complianceExportOpen, setComplianceExportOpen] = useState(false);
@@ -69,13 +74,47 @@ const EnhancedDashboard: React.FC = () => {
     setExpandedChart((prev) => (prev === chartId ? null : chartId));
   };
 
-  // Export chart data (Placeholder - Needs actual implementation)
-  const exportChart = (chartId: string, format: string): void => {
-    console.log(`Exporting chart ${chartId} in ${format} format`);
-    // TODO: Implement actual export logic (e.g., using html2canvas for PNG, jsPDF for PDF, or data-to-CSV)
-    // Close dropdown after selection
-    if (chartId === "incidents") setIncidentExportOpen(false);
-    if (chartId === "compliance") setComplianceExportOpen(false);
+  const exportChart = async (
+    chartId: "incidents" | "compliance",
+    format: string,
+  ): Promise<void> => {
+    const ref = chartId === "incidents" ? incidentChartRef : complianceChartRef;
+    if (!ref.current) return;
+
+    try {
+      if (format === "png" || format === "pdf") {
+        const canvas = await html2canvas(ref.current);
+        const imgData = canvas.toDataURL("image/png");
+        if (format === "png") {
+          const link = document.createElement("a");
+          link.href = imgData;
+          link.download = `${chartId}-chart.png`;
+          link.click();
+        } else {
+          const pdf = new jsPDF("p", "mm", "a4");
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = (canvas.height * pageWidth) / canvas.width;
+          pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
+          pdf.save(`${chartId}-chart.pdf`);
+        }
+      } else if (format === "csv") {
+        const metricsEntries = Object.entries(safetyMetrics).map(
+          ([k, v]) => `${k},${v}`,
+        );
+        const csv = ["Metric,Value", ...metricsEntries].join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${chartId}-chart.csv`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+    } catch (error) {
+      logger.error("Chart export failed", error);
+    } finally {
+      if (chartId === "incidents") setIncidentExportOpen(false);
+      if (chartId === "compliance") setComplianceExportOpen(false);
+    }
   };
 
   // Close dropdowns when clicking outside
@@ -365,7 +404,7 @@ const EnhancedDashboard: React.FC = () => {
               </button>
             </div>
           </div>
-          <div id="incident-chart-content" className="card-content">
+          <div id="incident-chart-content" className="card-content" ref={incidentChartRef}>
             <div
               className="chart-container"
               aria-label="Incident Trends Bar Chart"
@@ -462,7 +501,7 @@ const EnhancedDashboard: React.FC = () => {
               </button>
             </div>
           </div>
-          <div id="compliance-chart-content" className="card-content">
+          <div id="compliance-chart-content" className="card-content" ref={complianceChartRef}>
             <div
               className="chart-container"
               aria-label="Compliance Metrics Donut Chart"

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
 import { db } from "../utils/firebase";
 import {
@@ -273,7 +274,7 @@ const Automations: React.FC = () => {
                           className="action-button"
                           title="Edit"
                           onClick={() =>
-                            console.log(`Edit automation ${automation.id}`)
+                            logger.info(`Edit automation ${automation.id}`)
                           }
                         >
                           <svg
@@ -352,7 +353,7 @@ const Automations: React.FC = () => {
                           className="action-button"
                           title="Run Now"
                           onClick={() =>
-                            console.log(`Run automation ${automation.id}`)
+                            logger.info(`Run automation ${automation.id}`)
                           }
                         >
                           <svg

@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { logger } from "../utils/logger";
 import { useToast } from "../contexts/ToastContext";
 import { Chart, registerables } from "chart.js";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import { db } from "../utils/firebase"; // Assuming db is exported from firebase.ts
 import {
   collection,
@@ -390,7 +393,7 @@ const PerformanceMetrics: React.FC = () => {
     setShowExportOptions((prev) => !prev);
   };
 
-  const exportMetricsData = (format: "pdf" | "excel"): void => {
+  const exportMetricsData = async (format: "pdf" | "excel"): Promise<void> => {
     if (isExporting) return;
     setIsExporting(true);
     setExportFormat(format);
@@ -400,18 +403,50 @@ const PerformanceMetrics: React.FC = () => {
       title: "Exporting Data",
       message: `Preparing ${format.toUpperCase()} export...`,
     });
-    console.log(`Exporting metrics data in ${format} format`);
-    // TODO: Implement actual export logic (e.g., using jsPDF, SheetJS)
-    setTimeout(() => {
-      setIsExporting(false);
-      setExportFormat(null);
+
+    try {
+      const container = document.querySelector(
+        ".performance-metrics-container",
+      ) as HTMLElement | null;
+      if (!container) throw new Error("Metrics container not found");
+
+      if (format === "pdf") {
+        const canvas = await html2canvas(container);
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = (canvas.height * pageWidth) / canvas.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
+        pdf.save("performance-metrics.pdf");
+      } else {
+        const rows = Object.entries(metrics || {}).map(
+          ([key, val]) => `${key},${val.value}`,
+        );
+        const csv = ["Metric,Value", ...rows].join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "performance-metrics.csv";
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+
       addToast({
         type: "success",
         title: "Export Ready",
         message: `Metrics data export (${format.toUpperCase()}) is ready.`,
       });
-      console.log(`Simulating ${format.toUpperCase()} download...`);
-    }, 1500);
+    } catch (error) {
+      logger.error("Metrics export failed", error);
+      addToast({
+        type: "error",
+        title: "Export Failed",
+        message: "Could not export metrics data.",
+      });
+    } finally {
+      setIsExporting(false);
+      setExportFormat(null);
+    }
   };
 
   // --- Focus Management & Keyboard Nav (Keep existing hooks) ---

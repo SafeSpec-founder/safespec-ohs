@@ -16,8 +16,12 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ArticleIcon from "@mui/icons-material/Article";
-import { useAppDispatch } from "@store/index";
-import { uploadDocumentFile } from "@store/slices/documentSlice";
+import { useAppDispatch, useAppSelector } from "@store/index";
+import {
+  uploadDocumentFile,
+  createDocument,
+} from "@store/slices/documentSlice";
+import { selectUser } from "@store/slices/authSlice";
 
 interface DocumentUploaderProps {
   document: Document | null;
@@ -33,6 +37,7 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({
   maxSize = 10, // 10MB default
 }) => {
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(selectUser);
   const [file, setFile] = React.useState<File | null>(null);
   const [category, setCategory] = React.useState<string>("");
   const [title, setTitle] = React.useState<string>("");
@@ -88,30 +93,33 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({
     try {
       if (document) {
         // If we have a document, upload file to existing document
-        await dispatch(uploadDocumentFile({ id: document.id, file }));
-      } else {
-        // Otherwise create a new document with the file
-        // This would be handled by the parent component
-        if (onDocumentCreated) {
-          // This is a placeholder - in a real implementation, you would create the document first
-          // then upload the file to it
-          const newDocument = {
-            id: "temp-id", // This would be replaced by the actual ID from the API
-            title,
-            description,
-            category,
-            content: "",
-            version: 1,
-            status: "draft" as const,
-            tags: [],
-            createdBy: "current-user", // This would be replaced by the actual user ID
-            lastModifiedBy: "current-user", // This would be replaced by the actual user ID
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          };
+        await dispatch(uploadDocumentFile({ id: document.id, file })).unwrap();
+      } else if (onDocumentCreated) {
+        // Create a new document first to obtain a real ID
+        const newDocData = {
+          title,
+          description,
+          category,
+          content: "",
+          status: "draft" as const,
+          tags: [],
+          createdBy: currentUser?.id || "current-user",
+          lastModifiedBy: currentUser?.id || "current-user",
+        };
 
-          onDocumentCreated(newDocument);
-        }
+        let created = await dispatch(createDocument(newDocData)).unwrap();
+        const uploadResult = await dispatch(
+          uploadDocumentFile({ id: created.id, file }),
+        ).unwrap();
+
+        created = {
+          ...created,
+          fileUrl: uploadResult.fileUrl,
+          fileType: uploadResult.fileType,
+          fileSize: uploadResult.fileSize,
+        };
+
+        onDocumentCreated(created);
       }
 
       // Reset form

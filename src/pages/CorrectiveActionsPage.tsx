@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { logger } from "../utils/logger";
 import {
   Box,
   Typography,
@@ -74,17 +75,17 @@ const CorrectiveActionsPage: React.FC = () => {
 
   const handleDeleteAction = (action: any) => {
     // In a real app, this would dispatch a delete action
-    console.log("Delete action:", action.id);
+    logger.info("Delete action:", action.id);
   };
 
   const handleCompleteAction = (action: any) => {
     // In a real app, this would dispatch an update action
-    console.log("Complete action:", action.id);
+    logger.info("Complete action:", action.id);
   };
 
   const handleVerifyAction = (action: any) => {
     // In a real app, this would dispatch an update action
-    console.log("Verify action:", action.id);
+    logger.info("Verify action:", action.id);
   };
 
   const handleCreateSuccess = () => {

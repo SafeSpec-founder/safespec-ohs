@@ -1,5 +1,6 @@
 // Offline Sync Service for SafeSpec OHS Application
 import { openDB } from "idb";
+import { logger } from "../utils/logger";
 
 // Database configuration
 const DB_NAME = "SafeSpecOfflineDB";
@@ -168,7 +169,7 @@ class SyncService {
       });
 
       if (response.ok) {
-        console.log(
+        logger.info(
           `Successfully synced ${item.type} ${item.action} for item ${item.id}`,
         );
         return true;
@@ -222,7 +223,7 @@ const syncService = new SyncService();
 
 // Export functions for use in components
 export const initializeOfflineSync = () => {
-  console.log("Offline sync service initialized");
+  logger.info("Offline sync service initialized");
   return syncService;
 };
 
