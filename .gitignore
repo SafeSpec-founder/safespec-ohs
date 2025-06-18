@@ -9,3 +9,8 @@ ServiceAccountKey.json.json
 # Ignore coverage reports and temporary files
 coverage/
 pasted_content.txt
+# Ignore generated service worker files
+sw.js
+sw.js.map
+workbox-5ffe50d4.js
+workbox-5ffe50d4.js.map
