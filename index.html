@@ -177,13 +177,8 @@
   <!-- Environment Detection and Logging -->
   <script>
     // Environment detection
-    const isDevelopment =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1" ||
-      window.location.hostname.includes("dev") ||
-      window.location.port !== "";
-
-    const isProduction = !isDevelopment;
+      const isDevelopment = import.meta.env.DEV;
+      const isProduction = !isDevelopment;
 
     // Global environment variables
     window.__SAFESPEC_ENV__ = {
@@ -195,8 +190,8 @@
       protocol: window.location.protocol,
     };
 
-    // Console logging based on environment
-    if (isDevelopment) {
+    // Console logging only in development
+    if (import.meta.env.DEV) {
       console.log(
         "%c🔧 SafeSpec OHS - Development Mode",
         "background: #4caf50; color: white; padding: 8px 12px; border-radius: 4px; font-weight: bold;",
@@ -208,12 +203,6 @@
         pwa: true,
         mode: "development",
       });
-    } else {
-      console.log(
-        "%c🚀 SafeSpec OHS - Production Mode",
-        "background: #1976d2; color: white; padding: 8px 12px; border-radius: 4px; font-weight: bold;",
-      );
-      console.log("Version:", window.__SAFESPEC_ENV__.version);
     }
 
     // Performance monitoring
