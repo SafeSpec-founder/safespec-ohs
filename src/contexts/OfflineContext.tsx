@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { syncPendingData, getPendingSyncCount } from "../services/syncService";
 import { useOnlineStatus } from "../hooks/useHooks";
+import { logger } from "../utils/logger";
 
 interface OfflineContextType {
   isOnline: boolean;
@@ -107,7 +108,7 @@ export const OfflineProvider: React.FC<OfflineProviderProps> = ({
     manualSync,
     queueAction: (action: any) => {
       // Queue action for offline sync
-      console.log("Queueing action for offline sync:", action);
+      logger.info("Queueing action for offline sync:", action);
     },
   };
 

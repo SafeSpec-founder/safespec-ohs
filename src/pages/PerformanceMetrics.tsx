@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { logger } from "../utils/logger";
 import { useToast } from "../contexts/ToastContext";
 import { Chart, registerables } from "chart.js";
 import { db } from "../utils/firebase"; // Assuming db is exported from firebase.ts
@@ -400,7 +401,7 @@ const PerformanceMetrics: React.FC = () => {
       title: "Exporting Data",
       message: `Preparing ${format.toUpperCase()} export...`,
     });
-    console.log(`Exporting metrics data in ${format} format`);
+    logger.info(`Exporting metrics data in ${format} format`);
     // TODO: Implement actual export logic (e.g., using jsPDF, SheetJS)
     setTimeout(() => {
       setIsExporting(false);
@@ -410,7 +411,7 @@ const PerformanceMetrics: React.FC = () => {
         title: "Export Ready",
         message: `Metrics data export (${format.toUpperCase()}) is ready.`,
       });
-      console.log(`Simulating ${format.toUpperCase()} download...`);
+      logger.info(`Simulating ${format.toUpperCase()} download...`);
     }, 1500);
   };
 

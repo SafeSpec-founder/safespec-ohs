@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
 
 interface NotificationSettings {
@@ -122,13 +123,13 @@ const EnhancedSettings: React.FC = () => {
 
   // Handle export data
   const handleExportData = (): void => {
-    console.log("Exporting user data...");
+    logger.info("Exporting user data...");
     // In a real app, this would trigger a data export process
   };
 
   // Handle account deletion
   const handleDeleteAccount = (): void => {
-    setConfirmAction(() => () => console.log("Deleting account..."));
+    setConfirmAction(() => () => logger.info("Deleting account..."));
     setShowConfirmModal(true);
   };
 

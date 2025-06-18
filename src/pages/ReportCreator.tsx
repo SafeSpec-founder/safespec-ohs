@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { logger } from "../utils/logger";
 import { useToast } from "../contexts/ToastContext";
 import { db } from "../utils/firebase";
 import {
@@ -339,7 +340,7 @@ const ReportCreator: React.FC = () => {
       // Raw data (if included)
       const rawData = includeRawData ? "Raw data would be included here" : "";
 
-      console.log("PDF Structure:", {
+      logger.info("PDF Structure:", {
         title,
         subtitle,
         header,
@@ -358,7 +359,7 @@ const ReportCreator: React.FC = () => {
       const rows = processedData.map((row) => Object.values(row).join(","));
       const csv = [header, ...rows].join("\n");
 
-      console.log("CSV Content:", csv);
+      logger.info("CSV Content:", csv);
 
       // In a real app, this would trigger a download
       addToast({

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
 // Placeholder for charting library - choose one like Recharts or Chart.js
 // import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -71,7 +72,7 @@ const EnhancedDashboard: React.FC = () => {
 
   // Export chart data (Placeholder - Needs actual implementation)
   const exportChart = (chartId: string, format: string): void => {
-    console.log(`Exporting chart ${chartId} in ${format} format`);
+    logger.info(`Exporting chart ${chartId} in ${format} format`);
     // TODO: Implement actual export logic (e.g., using html2canvas for PNG, jsPDF for PDF, or data-to-CSV)
     // Close dropdown after selection
     if (chartId === "incidents") setIncidentExportOpen(false);

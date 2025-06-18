@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
 
 interface Document {
@@ -252,7 +253,7 @@ const DocumentManager: React.FC = () => {
                         <button
                           className="action-button"
                           title="View"
-                          onClick={() => console.log(`View document ${doc.id}`)}
+                          onClick={() => logger.info(`View document ${doc.id}`)}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -273,7 +274,7 @@ const DocumentManager: React.FC = () => {
                           className="action-button"
                           title="Download"
                           onClick={() =>
-                            console.log(`Download document ${doc.id}`)
+                            logger.info(`Download document ${doc.id}`)
                           }
                         >
                           <svg
@@ -295,7 +296,7 @@ const DocumentManager: React.FC = () => {
                         <button
                           className="action-button"
                           title="Edit"
-                          onClick={() => console.log(`Edit document ${doc.id}`)}
+                          onClick={() => logger.info(`Edit document ${doc.id}`)}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -317,7 +318,7 @@ const DocumentManager: React.FC = () => {
                             className="action-button"
                             title="Delete"
                             onClick={() =>
-                              console.log(`Delete document ${doc.id}`)
+                              logger.info(`Delete document ${doc.id}`)
                             }
                           >
                             <svg
