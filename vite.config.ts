@@ -4,7 +4,7 @@ import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     VitePWA({
@@ -99,7 +99,7 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
-    sourcemap: process.env.NODE_ENV !== "production",
+    sourcemap: mode !== "production",
     rollupOptions: {
       output: {
         manualChunks: {
@@ -119,6 +119,6 @@ export default defineConfig({
   optimizeDeps: {
     force: true,
   },
-});
+}));
 // This configuration sets up a Vite project with React, PWA support, and various optimizations.
 // It includes service worker caching strategies, asset handling, and a proxy for API requests.
