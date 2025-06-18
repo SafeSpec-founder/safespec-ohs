@@ -12,7 +12,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "../utils/firebase";
+import { auth, db } from "../config/firebase";
 import { authService } from "../services/authService";
 import { AppUser } from "../models";
 

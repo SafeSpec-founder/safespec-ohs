@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
-import { db } from "../utils/firebase";
+import { db } from "../config/firebase";
 import {
   collection,
   query,
