@@ -4,4 +4,5 @@ dist/
 build/
 *.tsbuildinfo
 .env
-
+ServiceAccountKey.json.json
+.env.production
