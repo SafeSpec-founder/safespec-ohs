@@ -6,3 +6,6 @@ build/
 .env
 ServiceAccountKey.json.json
 .env.production
+# Ignore coverage reports and temporary files
+coverage/
+pasted_content.txt
