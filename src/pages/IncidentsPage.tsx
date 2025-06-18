@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { logger } from "../utils/logger";
 import {
   Box,
   Typography,
@@ -71,7 +72,7 @@ const IncidentsPage: React.FC = () => {
 
   const handleDeleteIncident = (incident: any) => {
     // In a real app, this would dispatch a delete action
-    console.log("Delete incident:", incident.id);
+    logger.info("Delete incident:", incident.id);
   };
 
   const handleCreateSuccess = () => {

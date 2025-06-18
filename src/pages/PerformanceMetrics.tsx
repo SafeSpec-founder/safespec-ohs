@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { logger } from "../utils/logger";
 import { useToast } from "../contexts/ToastContext";
 import { Chart, registerables } from "chart.js";
 import jsPDF from "jspdf";
@@ -436,7 +437,7 @@ const PerformanceMetrics: React.FC = () => {
         message: `Metrics data export (${format.toUpperCase()}) is ready.`,
       });
     } catch (error) {
-      console.error("Metrics export failed", error);
+      logger.error("Metrics export failed", error);
       addToast({
         type: "error",
         title: "Export Failed",

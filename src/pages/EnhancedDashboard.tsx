@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -109,7 +110,7 @@ const EnhancedDashboard: React.FC = () => {
         URL.revokeObjectURL(link.href);
       }
     } catch (error) {
-      console.error("Chart export failed", error);
+      logger.error("Chart export failed", error);
     } finally {
       if (chartId === "incidents") setIncidentExportOpen(false);
       if (chartId === "compliance") setComplianceExportOpen(false);
@@ -403,11 +404,7 @@ const EnhancedDashboard: React.FC = () => {
               </button>
             </div>
           </div>
-          <div
-            id="incident-chart-content"
-            className="card-content"
-            ref={incidentChartRef}
-          >
+          <div id="incident-chart-content" className="card-content" ref={incidentChartRef}>
             <div
               className="chart-container"
               aria-label="Incident Trends Bar Chart"
@@ -504,11 +501,7 @@ const EnhancedDashboard: React.FC = () => {
               </button>
             </div>
           </div>
-          <div
-            id="compliance-chart-content"
-            className="card-content"
-            ref={complianceChartRef}
-          >
+          <div id="compliance-chart-content" className="card-content" ref={complianceChartRef}>
             <div
               className="chart-container"
               aria-label="Compliance Metrics Donut Chart"

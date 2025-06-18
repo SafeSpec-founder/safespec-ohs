@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "../utils/logger";
 // import { useAuth } from '../contexts/AuthContext'; // Removed unused import (TS6133 Fix)
 // import { useToast } from '../contexts/ToastContext'; // Removed unused import (TS6133 Fix)
 
@@ -142,7 +143,7 @@ const AdminDashboard: React.FC = () => {
   // Simulate fetching Performance Metrics data
   useEffect(() => {
     setIsLoadingMetrics(true);
-    console.log(
+    logger.info(
       `AdminDashboard: Fetching metrics for time range: ${timeRange}`,
     );
     setTimeout(() => {
@@ -163,7 +164,7 @@ const AdminDashboard: React.FC = () => {
   // Simulate fetching Permit Statistics data
   useEffect(() => {
     setIsLoadingPermits(true);
-    console.log(`AdminDashboard: Fetching permit stats`);
+    logger.info(`AdminDashboard: Fetching permit stats`);
     setTimeout(() => {
       const fetchedPermitStats: PermitStats = {
         active: 15,

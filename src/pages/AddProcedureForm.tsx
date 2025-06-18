@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { logger } from "../utils/logger";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../contexts/ToastContext"; // Assuming ToastContext is in components
 
@@ -66,7 +67,7 @@ const AddProcedureForm: React.FC = () => {
 
     setTimeout(() => {
       // In a real app: upload file to storage, save metadata to database
-      console.log("Simulating procedure submission:", {
+      logger.info("Simulating procedure submission:", {
         title,
         category,
         version,

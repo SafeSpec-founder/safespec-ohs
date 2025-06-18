@@ -3,6 +3,7 @@
  * Handles audit-related API calls and data management
  */
 import api from "./apiService";
+import { logger } from "../utils/logger";
 
 export interface AuditItem {
   id: string;
@@ -387,7 +388,7 @@ class AuditService {
 
   async deleteFinding(id: string): Promise<void> {
     // Mock implementation - findings are typically part of reports
-    console.log(`Deleting finding ${id}`);
+    logger.info(`Deleting finding ${id}`);
   }
 
   async getFilteredAudits(filters: any): Promise<any[]> {
