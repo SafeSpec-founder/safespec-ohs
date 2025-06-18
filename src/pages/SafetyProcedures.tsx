@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useToast } from "../contexts/ToastContext";
 import SafetyProceduresViewer from "./SafetyProceduresViewer";
-import { db } from "../utils/firebase"; // Import Firestore instance
+import { db } from "../config/firebase"; // Import Firestore instance
 import {
   collection,
   query,

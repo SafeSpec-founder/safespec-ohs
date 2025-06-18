@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useToast } from "../contexts/ToastContext";
-import { db } from "../utils/firebase";
+import { db } from "../config/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 
 interface RoleSelectorProps {

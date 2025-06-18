@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../contexts/ToastContext";
-import { db } from "../utils/firebase"; // Assuming db is exported from firebase.ts
+import { db } from "../config/firebase"; // Assuming db is exported from firebase.ts
 import {
   collection,
   query,

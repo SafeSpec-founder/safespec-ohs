@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { logger } from "../utils/logger";
 import { useToast } from "../contexts/ToastContext";
-import { db } from "../utils/firebase";
+import { db } from "../config/firebase";
 import {
   collection,
   query,

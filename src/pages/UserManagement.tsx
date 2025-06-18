@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "../contexts/ToastContext";
 import RoleSelector from "./RoleSelector";
-import { db, auth } from "../utils/firebase";
+import { db, auth } from "../config/firebase";
 import {
   collection,
   query,

@@ -4,7 +4,7 @@ import { useToast } from "../contexts/ToastContext";
 import { Chart, registerables } from "chart.js";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { db } from "../utils/firebase"; // Assuming db is exported from firebase.ts
+import { db } from "../config/firebase"; // Assuming db is exported from firebase.ts
 import {
   collection,
   doc,

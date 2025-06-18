@@ -13,7 +13,7 @@ import {
   updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "../utils/firebase";
+import { db } from "../config/firebase";
 
 // Interface for Permit
 interface Permit {
