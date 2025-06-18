@@ -1,6 +1,7 @@
 /**
  * Utility functions for the SafeSpec OHS application
  */
+import { logger } from "./logger";
 
 /**
  * Date formatting utilities
@@ -663,4 +664,7 @@ export default {
   color: colorUtils,
   object: objectUtils,
   array: arrayUtils,
+  logger: logger,
 };
+
+export { logger } from "./logger";

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
 import { useToast } from "../contexts/ToastContext";
 import {
@@ -109,7 +110,7 @@ const CreatePermitModal: React.FC<CreatePermitModalProps> = ({
       // issuedBy will be set by parent using logged-in user
     };
 
-    console.log(
+    logger.info(
       "Creating permit with data:",
       newPermitData,
       "Document:",

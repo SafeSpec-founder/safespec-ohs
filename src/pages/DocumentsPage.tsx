@@ -1,4 +1,5 @@
 import React from "react";
+import { logger } from "../utils/logger";
 import {
   Box,
   Typography,
@@ -67,7 +68,7 @@ const DocumentsPage: React.FC = () => {
 
   const handleDownloadDocument = (document: any) => {
     // In a real app, this would trigger a download
-    console.log("Download document:", document.id);
+    logger.info("Download document:", document.id);
   };
 
   const handleEditDocument = (document: any) => {
@@ -76,7 +77,7 @@ const DocumentsPage: React.FC = () => {
 
   const handleDeleteDocument = (document: any) => {
     // In a real app, this would dispatch a delete action
-    console.log("Delete document:", document.id);
+    logger.info("Delete document:", document.id);
   };
 
   const handleUploadSuccess = () => {
