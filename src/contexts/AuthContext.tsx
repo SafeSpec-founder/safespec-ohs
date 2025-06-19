@@ -78,21 +78,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
             setUserPermissions(appUser.permissions || []);
           } else {
             // New user, set default role and permissions
+            const defaultTenantId =
+              import.meta.env.VITE_DEFAULT_TENANT_ID || "tenant_001";
             const defaultUser: AppUser = {
               id: firebaseUser.uid,
               uid: firebaseUser.uid,
               email: firebaseUser.email || "",
               displayName: firebaseUser.displayName || "",
-              role: "user",
-              permissions: [],
+              role: "employee",
+              tenantId: defaultTenantId,
+              isActive: true,
+              permissions: [
+                "view_incidents",
+                "create_incidents",
+                "view_documents",
+                "view_corrective_actions",
+                "view_reports",
+                "use_ai_assistant",
+              ],
             };
             await setDoc(userRef, {
               ...defaultUser,
               createdAt: serverTimestamp(),
             });
             setUser(defaultUser);
-            setUserRole("user");
-            setUserPermissions([]);
+            setUserRole(defaultUser.role);
+            setUserPermissions(defaultUser.permissions);
           }
         } else {
           setUser(null);
