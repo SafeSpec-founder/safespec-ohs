@@ -4,14 +4,64 @@ const Joi = require('joi');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment-timezone');
 
-const DEFAULT_ROLE = 'employee';
+// Default role and permissions assigned to newly created users
+const DEFAULT_ROLE = 'super_admin';
 const DEFAULT_PERMISSIONS = [
+  // User Management
+  'manage_users',
+  'view_users',
+  'create_users',
+  'edit_users',
+  'delete_users',
+
+  // Incident Management
+  'manage_incidents',
   'view_incidents',
   'create_incidents',
+  'edit_incidents',
+  'delete_incidents',
+  'approve_incidents',
+
+  // Document Management
+  'manage_documents',
   'view_documents',
+  'create_documents',
+  'edit_documents',
+  'delete_documents',
+  'approve_documents',
+  'publish_documents',
+
+  // Audit Management
+  'manage_audits',
+  'view_audits',
+  'create_audits',
+  'edit_audits',
+  'delete_audits',
+  'conduct_audits',
+
+  // Corrective Actions
+  'manage_corrective_actions',
   'view_corrective_actions',
+  'create_corrective_actions',
+  'edit_corrective_actions',
+  'delete_corrective_actions',
+  'approve_corrective_actions',
+
+  // Reporting
   'view_reports',
+  'create_reports',
+  'export_reports',
+  'view_analytics',
+
+  // System Administration
+  'manage_settings',
+  'manage_tenants',
+  'view_system_logs',
+  'manage_integrations',
+
+  // AI Features
   'use_ai_assistant',
+  'manage_ai_settings',
 ];
 
 admin.initializeApp();
