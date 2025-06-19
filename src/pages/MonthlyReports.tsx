@@ -11,6 +11,7 @@ interface Report {
   author: string;
   status: "pending" | "approved" | "rejected";
   type: string;
+  details: string;
 }
 
 // Placeholder for Performance Metrics Data (Consistent with Weekly)
@@ -48,6 +49,7 @@ const MonthlyReports: React.FC = () => {
             author: "Safety Committee",
             status: "pending",
             type: "performance",
+            details: "Compilation of safety metrics for May including incident rates and training completion." ,
           },
           {
             id: "MR-002",
@@ -56,6 +58,7 @@ const MonthlyReports: React.FC = () => {
             author: "Internal Audit",
             status: "pending",
             type: "audit",
+            details: "Audit scheduled with focus on chemical storage areas." ,
           },
           {
             id: "MR-003",
@@ -64,6 +67,7 @@ const MonthlyReports: React.FC = () => {
             author: "Training Dept.",
             status: "approved",
             type: "training",
+            details: "Summary of completed and upcoming training courses." ,
           },
           {
             id: "MR-004",
@@ -72,6 +76,7 @@ const MonthlyReports: React.FC = () => {
             author: "Incident Response Team",
             status: "approved",
             type: "analysis",
+            details: "Breakdown of incidents reported and corrective actions taken." ,
           },
           {
             id: "MR-005",
@@ -80,6 +85,7 @@ const MonthlyReports: React.FC = () => {
             author: "Maintenance Dept.",
             status: "rejected",
             type: "maintenance",
+            details: "Report rejected pending updated service records." ,
           },
           {
             id: "MR-006",
@@ -88,6 +94,7 @@ const MonthlyReports: React.FC = () => {
             author: "Safety Committee",
             status: "approved",
             type: "assessment",
+            details: "Overall risk level reduced compared to previous month." ,
           },
           {
             id: "MR-007",
@@ -96,6 +103,7 @@ const MonthlyReports: React.FC = () => {
             author: "Procurement",
             status: "approved",
             type: "review",
+            details: "Stock levels adequate with minor shortages reported." ,
           },
           {
             id: "MR-008",
@@ -104,6 +112,7 @@ const MonthlyReports: React.FC = () => {
             author: "Admin",
             status: "approved",
             type: "minutes",
+            details: "Summary of meeting topics and assigned action items." ,
           },
         ];
         resolve(mockReports);
@@ -534,22 +543,7 @@ const MonthlyReports: React.FC = () => {
 
               <div className="report-content">
                 <h3>Report Content</h3>
-                <p>
-                  This is a placeholder for the actual report content. In a
-                  production environment, this would display the full report
-                  details, including:
-                </p>
-                <ul>
-                  <li>Key performance indicators (KPIs)</li>
-                  <li>Trend analysis</li>
-                  <li>Compliance summary</li>
-                  <li>Recommendations for improvement</li>
-                  <li>Action plan updates</li>
-                </ul>
-                <p>
-                  The report would also include any relevant charts, graphs, or
-                  attachments.
-                </p>
+                <p>{selectedReport.details}</p>
               </div>
             </div>
             <div className="modal-footer">

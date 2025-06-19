@@ -10,6 +10,7 @@ interface Report {
   author: string;
   status: "pending" | "approved" | "rejected";
   type: string;
+  details: string;
 }
 
 const DailyReports: React.FC = () => {
@@ -35,6 +36,7 @@ const DailyReports: React.FC = () => {
           author: "John Smith",
           status: "approved",
           type: "inspection",
+          details: "Inspection completed with no major issues found. Minor housekeeping items noted." ,
         },
         {
           id: "DR-002",
@@ -43,6 +45,7 @@ const DailyReports: React.FC = () => {
           author: "Emma Clark",
           status: "pending",
           type: "equipment",
+          details: "Scheduled maintenance required for hydraulic system." ,
         },
         {
           id: "DR-003",
@@ -51,6 +54,7 @@ const DailyReports: React.FC = () => {
           author: "Michael Johnson",
           status: "approved",
           type: "drill",
+          details: "All staff evacuated in under four minutes. Minor confusion at assembly point." ,
         },
         {
           id: "DR-004",
@@ -59,6 +63,7 @@ const DailyReports: React.FC = () => {
           author: "Sarah Williams",
           status: "rejected",
           type: "inspection",
+          details: "Improper labeling found on several containers. Follow-up required." ,
         },
         {
           id: "DR-005",
@@ -67,6 +72,7 @@ const DailyReports: React.FC = () => {
           author: "David Brown",
           status: "approved",
           type: "compliance",
+          details: "All employees observed wearing required protective equipment." ,
         },
         {
           id: "DR-006",
@@ -75,6 +81,7 @@ const DailyReports: React.FC = () => {
           author: "John Smith",
           status: "approved",
           type: "test",
+          details: "Exit doors functioning correctly and clear of obstructions." ,
         },
         {
           id: "DR-007",
@@ -83,6 +90,7 @@ const DailyReports: React.FC = () => {
           author: "Emma Clark",
           status: "pending",
           type: "maintenance",
+          details: "Awaiting delivery of new bandage supplies." ,
         },
         {
           id: "DR-008",
@@ -91,6 +99,7 @@ const DailyReports: React.FC = () => {
           author: "Michael Johnson",
           status: "approved",
           type: "observation",
+          details: "Oil spill cleaned and area secured." ,
         },
       ];
       setReports(mockReports);
@@ -470,22 +479,7 @@ const DailyReports: React.FC = () => {
 
               <div className="report-content">
                 <h3>Report Content</h3>
-                <p>
-                  This is a placeholder for the actual report content. In a
-                  production environment, this would display the full report
-                  details, including:
-                </p>
-                <ul>
-                  <li>Executive summary</li>
-                  <li>Findings and observations</li>
-                  <li>Compliance status</li>
-                  <li>Recommendations</li>
-                  <li>Action items</li>
-                </ul>
-                <p>
-                  The report would also include any relevant images, charts, or
-                  attachments.
-                </p>
+                <p>{selectedReport.details}</p>
               </div>
             </div>
             <div className="modal-footer">
