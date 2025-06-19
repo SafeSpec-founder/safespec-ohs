@@ -4,6 +4,16 @@ const Joi = require('joi');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment-timezone');
 
+const DEFAULT_ROLE = 'employee';
+const DEFAULT_PERMISSIONS = [
+  'view_incidents',
+  'create_incidents',
+  'view_documents',
+  'view_corrective_actions',
+  'view_reports',
+  'use_ai_assistant',
+];
+
 admin.initializeApp();
 
 const db = admin.firestore();
@@ -99,6 +109,20 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
   const { uid, email, displayName } = user;
 
   try {
+    let tenantId = process.env.DEFAULT_TENANT_ID || 'tenant_001';
+
+    if (process.env.FUNCTIONS_EMULATOR) {
+      const tenantSnap = await db.collection('tenants').limit(1).get();
+      if (!tenantSnap.empty) {
+        tenantId = tenantSnap.docs[0].id;
+      } else {
+        await db.collection('tenants').doc(tenantId).set({
+          name: 'Default Tenant',
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+    }
+
     // Create user profile in Firestore
     await db
       .collection('users')
@@ -107,11 +131,12 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
         uid,
         email,
         displayName: displayName || (email ? email.split('@')[0] : ''),
-        role: 'user',
+        tenantId,
+        role: DEFAULT_ROLE,
         status: 'active',
         isActive: true,
-        createdAt: moment().toISOString(),
-        updatedAt: moment().toISOString(),
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
         profile: {
           firstName: '',
           lastName: '',
@@ -133,12 +158,7 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
           language: 'en',
           timezone: 'UTC',
         },
-        permissions: {
-          incidents: ['read', 'create'],
-          documents: ['read'],
-          reports: ['read'],
-          compliance: ['read'],
-        },
+        permissions: DEFAULT_PERMISSIONS,
       });
 
     // Log the user creation
@@ -147,9 +167,10 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
       displayName,
     });
 
-    // Assign default custom claims for role and activation status
+    // Assign default custom claims for role, tenant, and activation status
     await admin.auth().setCustomUserClaims(uid, {
-      role: 'user',
+      role: DEFAULT_ROLE,
+      tenantId,
       isActive: true,
     });
 
@@ -159,6 +180,39 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
     throw new functions.https.HttpsError('internal', 'Failed to create user profile');
   }
 });
+
+// Sanitize user documents on create/update in development
+exports.enforceUserSchema = functions.firestore
+  .document('users/{userId}')
+  .onWrite(async (change) => {
+    if (!process.env.FUNCTIONS_EMULATOR) {
+      return null;
+    }
+
+    const data = change.after.exists ? change.after.data() : null;
+    if (!data) {
+      return null;
+    }
+
+    const updates = {};
+    if (!data.role) {
+      updates.role = DEFAULT_ROLE;
+    }
+    if (!Array.isArray(data.permissions)) {
+      updates.permissions = DEFAULT_PERMISSIONS;
+    }
+    if (!data.tenantId) {
+      updates.tenantId = process.env.DEFAULT_TENANT_ID || 'tenant_001';
+    }
+    if (data.isActive === undefined) {
+      updates.isActive = true;
+    }
+    if (Object.keys(updates).length > 0) {
+      await change.after.ref.update(updates);
+    }
+
+    return null;
+  });
 
 /**
  * Clean up user data when user is deleted
