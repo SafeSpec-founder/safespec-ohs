@@ -193,13 +193,22 @@ safespec_fullstack/
    cd safespec_fullstack
    ```
 
-2. **Install frontend dependencies**
+2. **Run the setup script**
+
+   The `setup.sh` script installs all dependencies and runs the project's lint
+   and test suites. It requires network access during execution.
+
+   ```bash
+   ./setup.sh
+   ```
+
+3. **Install frontend dependencies**
 
    ```bash
    npm install
    ```
 
-3. **Install backend dependencies**
+4. **Install backend dependencies**
 
    ```bash
    cd functions
@@ -207,14 +216,14 @@ safespec_fullstack/
    cd ..
    ```
 
-4. **Configure environment variables**
+5. **Configure environment variables**
 
    ```bash
    cp .env.example .env
    # Edit .env with your Firebase configuration
    ```
 
-5. **Initialize Firebase**
+6. **Initialize Firebase**
 
    ```bash
    firebase login
