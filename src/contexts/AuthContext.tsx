@@ -159,7 +159,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const login = async (email: string, password: string): Promise<void> => {
     try {
       setLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
+      await authService.login(email, password);
     } catch (error) {
       console.error("Error logging in:", error);
       throw error; // Re-throw the error to handle it in LoginPage
