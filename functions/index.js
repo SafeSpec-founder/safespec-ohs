@@ -109,6 +109,7 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
         displayName: displayName || (email ? email.split('@')[0] : ''),
         role: 'user',
         status: 'active',
+        isActive: true,
         createdAt: moment().toISOString(),
         updatedAt: moment().toISOString(),
         profile: {

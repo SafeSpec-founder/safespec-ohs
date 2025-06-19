@@ -32,7 +32,8 @@ service cloud.firestore {
     }
     
     function isActiveUser() {
-      return isAuthenticated() && getUserData().isActive == true;
+      return isAuthenticated() &&
+        (!('isActive' in getUserData()) || getUserData().isActive == true);
     }
     
     function isSuperAdmin() {

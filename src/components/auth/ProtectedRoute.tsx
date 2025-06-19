@@ -22,8 +22,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredPermissions = [],
   fallbackPath = "/login",
 }) => {
-  const { user, isAuthenticated } = useAuth(); // Only use properties that exist
+  const { user, isAuthenticated, loading } = useAuth(); // Include loading state
   const location = useLocation();
+
+  if (loading) {
+    // Prevent premature redirects while auth state is loading
+    return <div>Loading...</div>;
+  }
 
   // Redirect to login if not authenticated
   if (!isAuthenticated || !user) {
