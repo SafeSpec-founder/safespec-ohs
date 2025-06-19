@@ -38,7 +38,10 @@ const LoginPage: React.FC = () => {
           err instanceof Error
             ? err.message
             : "Failed to login. Please check your credentials.";
-        setError(errorMessage);
+        console.error("Authentication error", err);
+        setError(
+          `${errorMessage} If you are using the Firebase Auth emulator, ensure it is running.`,
+        );
       } finally {
         setSubmitting(false);
       }
