@@ -53,8 +53,8 @@ export const authService = {
 
       const userData = userDoc.data();
 
-      // Check if user is active
-      if (!userData.isActive) {
+      // Check if user is active (default to true when field is missing)
+      if (userData.isActive === false) {
         await signOut(auth);
         throw new Error("Account is deactivated");
       }
