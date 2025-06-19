@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 const Joi = require('joi');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment-timezone');
@@ -66,7 +67,7 @@ const DEFAULT_PERMISSIONS = [
 
 admin.initializeApp();
 
-const db = admin.firestore();
+const db = getFirestore();
 
 exports.helloWorld = functions.https.onRequest((req, res) => {
   res.send("Hello from Firebase!");
@@ -168,7 +169,7 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
       } else {
         await db.collection('tenants').doc(tenantId).set({
           name: 'Default Tenant',
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: FieldValue.serverTimestamp(),
         });
       }
     }
@@ -185,8 +186,8 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
         role: DEFAULT_ROLE,
         status: 'active',
         isActive: true,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp(),
         profile: {
           firstName: '',
           lastName: '',
@@ -272,15 +273,15 @@ exports.cleanupUserData = functions.auth.user().onDelete(async (user) => {
 
   try {
     // Delete user profile
-    await admin.firestore().collection('users').doc(uid).delete();
+    await db.collection('users').doc(uid).delete();
 
     // Archive user's incidents instead of deleting
-    const incidentsSnapshot = await admin.firestore()
+    const incidentsSnapshot = await db
       .collection('incidents')
       .where('reportedBy', '==', uid)
       .get();
 
-    const batch = admin.firestore().batch();
+    const batch = db.batch();
     incidentsSnapshot.docs.forEach((doc) => {
       batch.update(doc.ref, {
         reportedBy: 'DELETED_USER',
@@ -1050,9 +1051,24 @@ function calculatePriority(severity, category) {
 }
 
 /**
- * Create notification (stub)
+ * Create notification document
+ * @param {Object} options Notification details
  */
 async function createNotification(options) {
-  // You can implement this as needed, or leave as a stub for now
-  return;
+  const { type, title, message, targetRoles = [], targetUsers = [], data = {} } =
+    options || {};
+  try {
+    await db.collection('notifications').add({
+      type: type || 'general',
+      title: title || '',
+      message: message || '',
+      targetRoles,
+      targetUsers,
+      data,
+      readBy: [],
+      createdAt: moment().toISOString(),
+    });
+  } catch (error) {
+    console.error('Error creating notification:', error);
+  }
 }
