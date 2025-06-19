@@ -147,6 +147,12 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
       displayName,
     });
 
+    // Assign default custom claims for role and activation status
+    await admin.auth().setCustomUserClaims(uid, {
+      role: 'user',
+      isActive: true,
+    });
+
     console.log(`User profile created for ${email || uid}`);
   } catch (error) {
     console.error('Error creating user profile:', error);
