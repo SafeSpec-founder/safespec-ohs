@@ -109,6 +109,7 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
         displayName: displayName || (email ? email.split('@')[0] : ''),
         role: 'user',
         status: 'active',
+        isActive: true,
         createdAt: moment().toISOString(),
         updatedAt: moment().toISOString(),
         profile: {
@@ -144,6 +145,12 @@ exports.createUserOnSignUp = functions.auth.user().onCreate(async (user) => {
     await logAuditActivity(uid, 'USER_CREATED', {
       email,
       displayName,
+    });
+
+    // Assign default custom claims for role and activation status
+    await admin.auth().setCustomUserClaims(uid, {
+      role: 'user',
+      isActive: true,
     });
 
     console.log(`User profile created for ${email || uid}`);

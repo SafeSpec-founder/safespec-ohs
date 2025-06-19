@@ -29,7 +29,6 @@ const RiskAssessmentCard: React.FC<RiskAssessmentCardProps> = ({
 
     setLoading(true);
     try {
-      let assessmentData;
       if (isOffline) {
         // Try to get cached data when offline
         const cachedAssessment =
@@ -42,7 +41,7 @@ const RiskAssessmentCard: React.FC<RiskAssessmentCardProps> = ({
         }
       }
 
-      assessmentData = await riskService.getAssessment(assessmentId);
+      const assessmentData = await riskService.getAssessment(assessmentId);
       setAssessment(assessmentData);
       setError(null);
     } catch (err) {
