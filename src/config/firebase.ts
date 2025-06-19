@@ -5,16 +5,19 @@ import { getStorage, connectStorageEmulator } from "firebase/storage";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { logger } from "../utils/logger";
 
+// Support both browser and Node environments
+const env =
+  typeof import.meta !== "undefined" && import.meta.env
+    ? import.meta.env
+    : (process.env as Record<string, string>);
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-api-key",
-  authDomain:
-    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "safespec-ohs.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "safespec-ohs",
-  storageBucket:
-    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "safespec-ohs.appspot.com",
-  messagingSenderId:
-    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef123456",
+  apiKey: env.VITE_FIREBASE_API_KEY || "demo-api-key",
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || "safespec-ohs.firebaseapp.com",
+  projectId: env.VITE_FIREBASE_PROJECT_ID || "safespec-ohs",
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || "safespec-ohs.appspot.com",
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  appId: env.VITE_FIREBASE_APP_ID || "1:123456789:web:abcdef123456",
 };
 
 // Initialize Firebase
@@ -27,8 +30,9 @@ export const storage = getStorage(app);
 export const functions = getFunctions(app, "us-central1");
 
 // Connect to emulators in development
-if (import.meta.env.DEV) {
-  const useEmulators = import.meta.env.VITE_USE_FIREBASE_EMULATORS === "true";
+const isDev = env.DEV === "true" || env.NODE_ENV !== "production";
+if (isDev) {
+  const useEmulators = env.VITE_USE_FIREBASE_EMULATORS === "true";
 
   if (useEmulators) {
     try {
