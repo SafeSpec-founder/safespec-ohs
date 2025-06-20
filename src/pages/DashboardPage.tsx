@@ -30,21 +30,43 @@ const DashboardPage: React.FC = () => {
   const recentIncidents = incidents.slice(0, 5).map((inc) => ({
     id: inc.id,
     title: inc.title,
-    severity: inc.severity.charAt(0).toUpperCase() + inc.severity.slice(1),
-    status: inc.status.replace("_", " "),
-    reportedBy: inc.reportedBy?.firstName || "",
+    severity: inc.severity
+      .charAt(0)
+      .toUpperCase()
+      .concat(inc.severity.slice(1)) as
+      | "Low"
+      | "Medium"
+      | "High"
+      | "Critical",
+    status: inc.status.replace("_", " ") as
+      | "Open"
+      | "In Progress"
+      | "Under Review"
+      | "Closed",
+    reportedBy: inc.reportedBy,
     reportedAt: inc.date,
     location: inc.location,
-    assignedTo: inc.assignedTo?.firstName,
+    assignedTo: inc.assignedTo || "",
   }));
 
   const upcomingActions = correctiveActions.slice(0, 5).map((action) => ({
     id: action.id,
     title: action.title,
-    assignedTo: action.assignedTo.firstName,
+    description: action.description,
+    priority: (action.priority.charAt(0).toUpperCase() +
+      action.priority.slice(1)) as "Low" | "Medium" | "High" | "Critical",
+    status: (action.status
+      .replace("_", " ")
+      .replace("overdue", "Overdue")) as
+      | "Not Started"
+      | "In Progress"
+      | "Under Review"
+      | "Completed"
+      | "Overdue",
+    assignedTo: action.assignedTo,
     dueDate: action.dueDate,
     progress: 0,
-    relatedIncident: action.incidentId,
+    relatedIncident: action.relatedIncidentId,
     category: "Corrective" as const,
   }));
 

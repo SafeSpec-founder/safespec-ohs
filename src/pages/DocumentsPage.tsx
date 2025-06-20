@@ -133,7 +133,7 @@ const DocumentsPage: React.FC = () => {
 
       {showUploader && (
         <Box sx={{ mb: 4 }}>
-          <DocumentUploader onDocumentCreated={handleUploadSuccess} />
+          <DocumentUploader document={null} onDocumentCreated={handleUploadSuccess} />
         </Box>
       )}
 
