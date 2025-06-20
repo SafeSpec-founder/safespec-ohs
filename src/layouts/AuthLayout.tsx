@@ -10,7 +10,15 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { Outlet } from "react-router-dom";
 
-const AuthLayout: React.FC = () => {
+interface AuthLayoutProps {
+  title?: string;
+  children?: React.ReactNode;
+}
+
+const AuthLayout: React.FC<AuthLayoutProps> = ({
+  title = "SafeSpec OHS",
+  children,
+}) => {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -26,9 +34,9 @@ const AuthLayout: React.FC = () => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
-          SafeSpec OHS
+          {title}
         </Typography>
-        <Outlet />
+        {children ? children : <Outlet />}
       </Box>
       <Box mt={5}>
         <Typography variant="body2" color="text.secondary" align="center">

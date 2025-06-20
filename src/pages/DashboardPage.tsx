@@ -27,6 +27,27 @@ const DashboardPage: React.FC = () => {
   const documents = useAppSelector(selectDocuments);
   const correctiveActions = useAppSelector(selectCorrectiveActions);
 
+  const recentIncidents = incidents.slice(0, 5).map((inc) => ({
+    id: inc.id,
+    title: inc.title,
+    severity: inc.severity.charAt(0).toUpperCase() + inc.severity.slice(1),
+    status: inc.status.replace("_", " "),
+    reportedBy: inc.reportedBy?.firstName || "",
+    reportedAt: inc.date,
+    location: inc.location,
+    assignedTo: inc.assignedTo?.firstName,
+  }));
+
+  const upcomingActions = correctiveActions.slice(0, 5).map((action) => ({
+    id: action.id,
+    title: action.title,
+    assignedTo: action.assignedTo.firstName,
+    dueDate: action.dueDate,
+    progress: 0,
+    relatedIncident: action.incidentId,
+    category: "Corrective" as const,
+  }));
+
   // Calculate some metrics for the dashboard
   const totalIncidents = incidents.length;
   const openIncidents = incidents.filter(
@@ -246,7 +267,7 @@ const DashboardPage: React.FC = () => {
             <Typography variant="h6" gutterBottom>
               Recent Incidents
             </Typography>
-            <RecentIncidentsTable incidents={incidents.slice(0, 5) as any} />
+            <RecentIncidentsTable incidents={recentIncidents} />
           </Paper>
         </Grid>
 
@@ -256,7 +277,7 @@ const DashboardPage: React.FC = () => {
             <Typography variant="h6" gutterBottom>
               Upcoming Actions
             </Typography>
-            <UpcomingActionsTable actions={correctiveActions.slice(0, 5) as any} />
+            <UpcomingActionsTable actions={upcomingActions} />
           </Paper>
         </Grid>
 

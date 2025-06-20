@@ -80,11 +80,11 @@ const DocumentsPage: React.FC = () => {
     logger.info("Delete document:", document.id);
   };
 
-    const handleUploadSuccess = () => {
-      setShowUploader(false);
-      // In a real app, this would refresh the documents list
-      dispatch(fetchDocuments({}));
-    };
+  const handleUploadSuccess = () => {
+    setShowUploader(false);
+    // In a real app, this would refresh the documents list
+    dispatch(fetchDocuments({}));
+  };
 
   // Filter documents based on the selected tab
   const filteredDocuments = React.useMemo(() => {
@@ -132,9 +132,9 @@ const DocumentsPage: React.FC = () => {
       </Box>
 
       {showUploader && (
-          <Box sx={{ mb: 4 }}>
-            <DocumentUploader document={null} onDocumentCreated={handleUploadSuccess} />
-          </Box>
+        <Box sx={{ mb: 4 }}>
+          <DocumentUploader onDocumentCreated={handleUploadSuccess} />
+        </Box>
       )}
 
       <Paper sx={{ width: "100%", borderRadius: 2 }}>
