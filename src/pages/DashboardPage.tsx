@@ -74,11 +74,7 @@ const DashboardPage: React.FC = () => {
       <Grid container spacing={3}>
         {/* Safety Score */}
         <Grid item xs={12} md={6} lg={3}>
-          <SafetyScoreCard
-            score={85}
-            trend={+5}
-            lastUpdated={new Date().toISOString()}
-          />
+          <SafetyScoreCard overallScore={85} />
         </Grid>
 
         {/* Incident Summary */}

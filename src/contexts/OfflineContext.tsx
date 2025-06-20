@@ -5,7 +5,11 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { syncPendingData, getPendingSyncCount } from "../services/syncService";
+import {
+  syncPendingData,
+  getPendingSyncCount,
+  addToSyncQueue,
+} from "../services/syncService";
 import { useOnlineStatus } from "../hooks/useHooks";
 import { logger } from "../utils/logger";
 
@@ -47,17 +51,18 @@ export const OfflineProvider: React.FC<OfflineProviderProps> = ({
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
   const [pendingSyncCount, setPendingSyncCount] = useState<number>(0);
 
-  // Sync data function (move this above useEffect and wrap in useCallback)
   const syncData = React.useCallback(async () => {
     if (!isOnline || isSyncing) return;
     setIsSyncing(true);
     try {
-      await syncPendingData();
-      const now = Date.now();
-      localStorage.setItem("lastSyncTime", now.toString());
-      setLastSyncTime(new Date(now));
+      const syncSuccessful = await syncPendingData();
       const pendingCount = await getPendingSyncCount();
       setPendingSyncCount(pendingCount);
+      if (syncSuccessful && pendingCount === 0) {
+        const now = Date.now();
+        localStorage.setItem("lastSyncTime", now.toString());
+        setLastSyncTime(new Date(now));
+      }
     } catch (error) {
       console.error("Error during automatic sync:", error);
     } finally {
@@ -79,18 +84,19 @@ export const OfflineProvider: React.FC<OfflineProviderProps> = ({
     setIsSyncing(true);
 
     try {
-      await syncPendingData();
+      const syncSuccessful = await syncPendingData();
 
-      // Update last sync time
-      const now = Date.now();
-      localStorage.setItem("lastSyncTime", now.toString());
-      setLastSyncTime(new Date(now));
-
-      // Update pending count
       const pendingCount = await getPendingSyncCount();
       setPendingSyncCount(pendingCount);
 
-      return true;
+      if (syncSuccessful && pendingCount === 0) {
+        const now = Date.now();
+        localStorage.setItem("lastSyncTime", now.toString());
+        setLastSyncTime(new Date(now));
+        return true;
+      }
+
+      return false;
     } catch (error) {
       console.error("Error during manual sync:", error);
       return false;
@@ -107,8 +113,15 @@ export const OfflineProvider: React.FC<OfflineProviderProps> = ({
     pendingSyncCount,
     manualSync,
     queueAction: (action: any) => {
-      // Queue action for offline sync
       logger.info("Queueing action for offline sync:", action);
+      try {
+        addToSyncQueue(action as any);
+        getPendingSyncCount()
+          .then((pending) => setPendingSyncCount(pending))
+          .catch((error) => logger.error("Failed to get pending count:", error));
+      } catch (error) {
+        logger.error("Failed to queue action:", error);
+      }
     },
   };
 
