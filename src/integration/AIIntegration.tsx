@@ -199,7 +199,7 @@ const AIIntegration: React.FC<AIIntegrationProps> = ({
 
         {result.type === "analysis" ? (
           <Box>
-            {result.sections.map((section: any, index: number) => (
+          {result.sections?.map((section: any, index: number) => (
               <Box key={index} sx={{ mb: 3 }}>
                 <Typography variant="subtitle1" gutterBottom>
                   {section.title}

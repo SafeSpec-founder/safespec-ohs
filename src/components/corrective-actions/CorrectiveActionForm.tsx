@@ -92,7 +92,7 @@ const CorrectiveActionForm: React.FC<CorrectiveActionFormProps> = ({
         title,
         description,
         priority: priority as "low" | "medium" | "high" | "critical",
-        dueDate: dueDate ? dueDate.toISOString() : undefined,
+        dueDate: dueDate.toISOString(),
         assignedTo,
         assignedBy: currentUser?.id || "current-user", // This would be the actual user ID in a real app
         status: correctiveAction?.status || "open",
@@ -111,12 +111,9 @@ const CorrectiveActionForm: React.FC<CorrectiveActionFormProps> = ({
           }),
         ).unwrap();
       } else {
-        const newAction = {
+        const newAction: Omit<CorrectiveAction, "id" | "createdAt" | "updatedAt"> = {
           ...correctiveActionData,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
         };
-        // Remove id from the object we're creating to avoid the TypeScript error
         result = await dispatch(createCorrectiveAction(newAction)).unwrap();
       }
 
@@ -173,7 +170,11 @@ const CorrectiveActionForm: React.FC<CorrectiveActionFormProps> = ({
                 <Select
                   labelId="priority-label"
                   value={priority}
-                  onChange={(e) => setPriority(e.target.value)}
+                  onChange={(e) =>
+                    setPriority(
+                      e.target.value as "low" | "medium" | "high" | "critical",
+                    )
+                  }
                   label="Priority"
                   required
                 >

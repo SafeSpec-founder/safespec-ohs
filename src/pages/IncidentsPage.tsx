@@ -55,7 +55,7 @@ const IncidentsPage: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchIncidents());
+    dispatch(fetchIncidents({}));
   }, [dispatch]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -78,7 +78,7 @@ const IncidentsPage: React.FC = () => {
   const handleCreateSuccess = () => {
     setShowForm(false);
     // In a real app, this would refresh the incidents list
-    dispatch(fetchIncidents());
+    dispatch(fetchIncidents({}));
   };
 
   // Filter incidents based on the selected tab

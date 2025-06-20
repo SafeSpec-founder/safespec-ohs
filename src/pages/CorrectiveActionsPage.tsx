@@ -58,7 +58,7 @@ const CorrectiveActionsPage: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchCorrectiveActions());
+    dispatch(fetchCorrectiveActions({}));
   }, [dispatch]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -91,7 +91,7 @@ const CorrectiveActionsPage: React.FC = () => {
   const handleCreateSuccess = () => {
     setShowForm(false);
     // In a real app, this would refresh the actions list
-    dispatch(fetchCorrectiveActions());
+    dispatch(fetchCorrectiveActions({}));
   };
 
   // Filter actions based on the selected tab

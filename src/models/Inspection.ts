@@ -38,7 +38,7 @@ export interface InspectionFinding {
   location: string;
   evidence: string[];
   correctiveActions: string[];
-  status: "open" | "in-progress" | "resolved" | "verified";
+  status: "open" | "in-progress" | "resolved" | "closed" | "verified";
   assignedTo?: string;
   dueDate?: string;
   itemId?: string;

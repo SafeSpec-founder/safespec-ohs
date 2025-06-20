@@ -55,7 +55,7 @@ const DocumentsPage: React.FC = () => {
   const [showUploader, setShowUploader] = React.useState(false);
 
   React.useEffect(() => {
-    dispatch(fetchDocuments());
+    dispatch(fetchDocuments({}));
   }, [dispatch]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -83,7 +83,7 @@ const DocumentsPage: React.FC = () => {
   const handleUploadSuccess = () => {
     setShowUploader(false);
     // In a real app, this would refresh the documents list
-    dispatch(fetchDocuments());
+    dispatch(fetchDocuments({}));
   };
 
   // Filter documents based on the selected tab
@@ -133,10 +133,7 @@ const DocumentsPage: React.FC = () => {
 
       {showUploader && (
         <Box sx={{ mb: 4 }}>
-          <DocumentUploader
-            onDocumentCreated={handleUploadSuccess}
-            onCancel={() => setShowUploader(false)}
-          />
+          <DocumentUploader onDocumentCreated={handleUploadSuccess} />
         </Box>
       )}
 

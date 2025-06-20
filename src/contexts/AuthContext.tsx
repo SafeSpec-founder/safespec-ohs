@@ -103,7 +103,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
             });
             setUser(defaultUser);
             setUserRole(defaultUser.role);
-            setUserPermissions(defaultUser.permissions);
+            setUserPermissions(defaultUser.permissions || []);
           }
         } else {
           setUser(null);

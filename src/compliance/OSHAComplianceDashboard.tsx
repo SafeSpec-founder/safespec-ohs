@@ -665,10 +665,10 @@ const OSHAComplianceDashboard: React.FC = () => {
                 label="Severity"
                 value={selectedFinding.severity}
                 onChange={(e) =>
-                  setSelectedFinding({
-                    ...selectedFinding,
-                    severity: e.target.value,
-                  })
+                    setSelectedFinding({
+                      ...selectedFinding,
+                      severity: e.target.value as "low" | "medium" | "high" | "critical",
+                    })
                 }
                 fullWidth
                 margin="normal"
@@ -691,10 +691,10 @@ const OSHAComplianceDashboard: React.FC = () => {
                 label="Status"
                 value={selectedFinding.status}
                 onChange={(e) =>
-                  setSelectedFinding({
-                    ...selectedFinding,
-                    status: e.target.value,
-                  })
+                    setSelectedFinding({
+                      ...selectedFinding,
+                      status: e.target.value as "open" | "in-progress" | "closed" | "resolved" | "verified",
+                    })
                 }
                 fullWidth
                 margin="normal"

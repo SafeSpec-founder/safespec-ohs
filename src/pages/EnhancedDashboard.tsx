@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
 import jsPDF from "jspdf";
