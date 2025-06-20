@@ -665,30 +665,30 @@ const PerformanceMetrics: React.FC = () => {
                   </p>
                   <p>
                     <strong>Current Value:</strong>{" "}
-                    {metrics && metrics[selectedMetric]
-                      ? formatMetricValue(
-                          selectedMetric,
-                          metrics[selectedMetric].value,
-                        )
-                      : "N/A"}
+                      {metrics && metrics[selectedMetric]
+                        ? formatMetricValue(
+                            selectedMetric,
+                            metrics[selectedMetric]?.value ?? 0,
+                          )
+                        : "N/A"}
                   </p>
                   <p>
                     <strong>Status:</strong>{" "}
-                    {metrics && metrics[selectedMetric]
-                      ? getMetricStatus(
-                          selectedMetric,
-                          metrics[selectedMetric].value,
-                        ).text
-                      : "N/A"}
+                      {metrics && metrics[selectedMetric]
+                        ? getMetricStatus(
+                            selectedMetric,
+                            metrics[selectedMetric]?.value ?? 0,
+                          ).text
+                        : "N/A"}
                   </p>
                   <p>
                     <strong>Trend:</strong>{" "}
-                    {metrics && metrics[selectedMetric]
-                      ? formatTrend(
-                          selectedMetric,
-                          metrics[selectedMetric].trend,
-                        ).text
-                      : "N/A"}
+                      {metrics && metrics[selectedMetric]
+                        ? formatTrend(
+                            selectedMetric,
+                            metrics[selectedMetric]?.trend ?? 0,
+                          ).text
+                        : "N/A"}
                   </p>
                 </div>
                 <div className="chart-container">
