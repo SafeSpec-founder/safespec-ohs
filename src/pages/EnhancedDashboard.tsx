@@ -3,8 +3,19 @@ import { logger } from "../utils/logger";
 import { useAuth } from "../contexts/AuthContext";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-// Placeholder for charting library - choose one like Recharts or Chart.js
-// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 // Define interfaces for state
 interface SafetyMetrics {
@@ -57,6 +68,19 @@ const EnhancedDashboard: React.FC = () => {
       attendees: 6,
     },
   ]);
+
+  const incidentData = [
+    { month: "Jan", incidents: 3 },
+    { month: "Feb", incidents: 4 },
+    { month: "Mar", incidents: 2 },
+    { month: "Apr", incidents: 5 },
+    { month: "May", incidents: 1 },
+  ];
+
+  const complianceData = [
+    { name: "Compliant", value: safetyMetrics.complianceRate },
+    { name: "Non-Compliant", value: 100 - safetyMetrics.complianceRate },
+  ];
 
   // Refs for dropdowns
   const incidentExportRef = useRef<HTMLDivElement>(null);
@@ -405,20 +429,17 @@ const EnhancedDashboard: React.FC = () => {
             </div>
           </div>
           <div id="incident-chart-content" className="card-content" ref={incidentChartRef}>
-            <div
-              className="chart-container"
-              aria-label="Incident Trends Bar Chart"
-            >
-              {/* Placeholder Chart - Replace with actual charting library component */}
-              <div
-                className="placeholder-chart"
-                role="img"
-                aria-label="Bar chart showing incident trends over the last 5 months."
-              >
-                {/* ... placeholder bars ... */}
-              </div>
-              {/* Actual Chart Component would go here */}
-              {/* <ResponsiveContainer width="100%" height={300}> <BarChart data={incidentData}> ... </BarChart> </ResponsiveContainer> */}
+            <div className="chart-container" aria-label="Incident Trends Bar Chart">
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={incidentData} margin={{ top: 20, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="incidents" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
 
               {expandedChart === "incidents" && (
                 <div className="expanded-chart-details">
@@ -502,20 +523,27 @@ const EnhancedDashboard: React.FC = () => {
             </div>
           </div>
           <div id="compliance-chart-content" className="card-content" ref={complianceChartRef}>
-            <div
-              className="chart-container"
-              aria-label="Compliance Metrics Donut Chart"
-            >
-              {/* Placeholder Chart - Replace with actual charting library component */}
-              <div
-                className="placeholder-chart"
-                role="img"
-                aria-label="Donut chart showing 96% compliance."
-              >
-                {/* ... placeholder donut ... */}
-              </div>
-              {/* Actual Chart Component would go here */}
-              {/* <ResponsiveContainer width="100%" height={300}> <PieChart> ... </PieChart> </ResponsiveContainer> */}
+            <div className="chart-container" aria-label="Compliance Metrics Donut Chart">
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={complianceData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {complianceData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={index === 0 ? "#82ca9d" : "#d32f2f"} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
 
               {expandedChart === "compliance" && (
                 <div className="expanded-chart-details">
