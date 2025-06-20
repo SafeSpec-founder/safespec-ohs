@@ -45,7 +45,7 @@ const ProfilePage: React.FC = () => {
 
   // Profile form state
   const [profileData, setProfileData] = useState({
-    name: user?.name || "",
+    name: user?.displayName || "",
     email: user?.email || "",
     department: "",
     position: "",
@@ -164,7 +164,7 @@ const ProfilePage: React.FC = () => {
                       sx={{ width: 120, height: 120, mb: 2 }}
                       src={user?.avatar}
                     >
-                      {user?.name?.charAt(0)}
+                      {user?.displayName?.charAt(0)}
                     </Avatar>
                     <Button variant="outlined" size="small">
                       Change Photo

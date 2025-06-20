@@ -97,7 +97,10 @@ const ComplianceChecklist: React.FC = () => {
   const updateItemStatus = async (itemId: string, newStatus: string) => {
     try {
       if (isOffline) {
-        queueAction("updateItemStatus", { itemId, status: newStatus });
+        queueAction({
+          type: "updateItemStatus",
+          payload: { itemId, status: newStatus },
+        });
         // Update UI optimistically
         const updatedItems = items.map((item) =>
           item.id === itemId ? { ...item, status: newStatus } : item,
