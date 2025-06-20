@@ -9,6 +9,7 @@ export interface AppUser {
   email: string;
   displayName: string;
   role: string;
+  tenantId?: string;
   permissions?: string[];
   department?: string;
   position?: string;

@@ -27,7 +27,7 @@ interface Finding {
   title: string;
   description: string;
   severity: "low" | "medium" | "high" | "critical";
-  status: "open" | "in-progress" | "closed";
+  status: "open" | "in-progress" | "closed" | "resolved" | "verified";
   location: string;
   dueDate: string;
   assignee?: string;
@@ -106,7 +106,7 @@ const OSHAComplianceDashboard: React.FC = () => {
 
   const updateFindingStatus = async (
     findingId: string,
-    newStatus: "open" | "in-progress" | "closed",
+    newStatus: "open" | "in-progress" | "closed" | "resolved" | "verified",
   ) => {
     try {
       // Convert status format between Finding status and ComplianceItem status
