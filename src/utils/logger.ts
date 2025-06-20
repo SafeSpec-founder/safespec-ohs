@@ -1,11 +1,13 @@
+const isDev = (import.meta.env as any).DEV;
+
 export const logger = {
   info: (...args: unknown[]): void => {
-    if (import.meta.env.DEV) {
+    if (isDev) {
       console.log(...args);
     }
   },
   warn: (...args: unknown[]): void => {
-    if (import.meta.env.DEV) {
+    if (isDev) {
       console.warn(...args);
     }
   },

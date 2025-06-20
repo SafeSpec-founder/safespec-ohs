@@ -305,7 +305,7 @@ const AuditWorkflow: React.FC = () => {
         return;
       }
 
-      let updatedAudit;
+      let updatedAudit: any;
       if (approvalAction === "approve") {
         updatedAudit = await auditService.approveAudit(selectedAudit.id, {
           notes: approvalNotes,

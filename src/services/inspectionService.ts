@@ -1,4 +1,10 @@
 import axios from "axios";
+import {
+  Inspection,
+  InspectionItem,
+  InspectionTemplate,
+  InspectionFinding as Finding,
+} from "../models/Inspection";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:3001/api",
@@ -7,57 +13,7 @@ const api = axios.create({
   },
 });
 
-export interface Inspection {
-  id: string;
-  title: string;
-  description: string;
-  type: "safety" | "quality" | "environmental" | "compliance";
-  status: "scheduled" | "in-progress" | "completed" | "cancelled";
-  priority: "low" | "medium" | "high" | "critical";
-  assignedTo: string;
-  location: string;
-  scheduledDate: string;
-  completedDate?: string;
-  checklist: InspectionItem[];
-  findings: Finding[];
-  attachments: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface InspectionItem {
-  id: string;
-  description: string;
-  category: string;
-  isCompliant: boolean | null;
-  notes?: string;
-  evidence?: string[];
-  severity?: "low" | "medium" | "high" | "critical";
-}
-
-export interface Finding {
-  id: string;
-  description: string;
-  severity: "low" | "medium" | "high" | "critical";
-  category: string;
-  location: string;
-  evidence: string[];
-  correctiveActions: string[];
-  status: "open" | "in-progress" | "resolved" | "verified";
-  assignedTo?: string;
-  dueDate?: string;
-}
-
-export interface InspectionTemplate {
-  id: string;
-  name: string;
-  description: string;
-  type: string;
-  checklist: Omit<
-    InspectionItem,
-    "id" | "isCompliant" | "notes" | "evidence"
-  >[];
-}
+// reuse types from models
 
 export const inspectionService = {
   async getInspections(
@@ -97,6 +53,18 @@ export const inspectionService = {
     updates: Partial<Inspection>,
   ): Promise<Inspection> {
     const response = await api.put(`/inspections/${id}`, updates);
+    return response.data;
+  },
+
+  async updateInspectionItem(
+    inspectionId: string,
+    itemId: string,
+    updates: Partial<InspectionItem>,
+  ): Promise<InspectionItem> {
+    const response = await api.put(
+      `/inspections/${inspectionId}/items/${itemId}`,
+      updates,
+    );
     return response.data;
   },
 

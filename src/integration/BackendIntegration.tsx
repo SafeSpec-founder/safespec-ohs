@@ -17,7 +17,7 @@ import { selectCurrentTenant } from "../store/slices/tenantSlice";
 
 interface ApiEndpoint {
   name: string;
-  status: "online" | "offline" | "error";
+  status: "online" | "offline" | "degraded" | "error";
   latency: string;
 }
 
@@ -49,11 +49,6 @@ const mockApiService = {
   },
 };
 
-interface ApiEndpoint {
-  name: string;
-  status: "online" | "offline" | "degraded";
-  latency: string;
-}
 
 const BackendIntegration: React.FC = () => {
   const theme = useTheme();
@@ -220,11 +215,11 @@ const BackendIntegration: React.FC = () => {
               <Typography variant="subtitle1" gutterBottom>
                 Role-Based Access Control
               </Typography>
-              <Typography variant="body2" paragraph>
-                Current User: {user?.firstName} {user?.lastName}
-                <br />
-                Roles: {user?.roles?.join(", ") || "None"}
-              </Typography>
+                <Typography variant="body2" paragraph>
+                  Current User: {user?.firstName} {user?.lastName}
+                  <br />
+                  Role: {user?.role || "None"}
+                </Typography>
               <Button variant="outlined" size="small">
                 Validate Permissions
               </Button>

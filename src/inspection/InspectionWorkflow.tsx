@@ -45,10 +45,13 @@ const InspectionWorkflow: React.FC = () => {
 
   const createInspection = async (templateId: string) => {
     try {
-      if (isOffline) {
-        queueAction("createInspection", { templateId });
-        // Update UI optimistically
-        return;
+        if (isOffline) {
+          queueAction({
+            type: "createInspection",
+            payload: { templateId },
+          });
+          // Update UI optimistically
+          return;
       }
 
       const newInspection =
@@ -67,27 +70,31 @@ const InspectionWorkflow: React.FC = () => {
   ) => {
     try {
       if (isOffline) {
-        queueAction("updateInspectionItem", { inspectionId, itemId, data });
+        queueAction({
+          type: "updateInspectionItem",
+          payload: { inspectionId, itemId, data },
+        });
         // Update UI optimistically
         return;
       }
 
-      await inspectionService.updateInspection(inspectionId, {
+      await inspectionService.updateInspectionItem(
+        inspectionId,
         itemId,
-        ...data,
-      });
+        data,
+      );
       // Update local state
-      const updatedInspections = inspections.map((inspection) => {
-        if (inspection.id === inspectionId && inspection.items) {
-          return {
-            ...inspection,
-            items: inspection.items.map((item: InspectionItem) =>
-              item.id === itemId ? { ...item, ...data } : item,
-            ),
-          };
-        }
-        return inspection;
-      });
+        const updatedInspections: Inspection[] = inspections.map((inspection): Inspection => {
+          if (inspection.id === inspectionId && inspection.items) {
+            return {
+              ...inspection,
+              items: inspection.items.map((item: InspectionItem) =>
+                item.id === itemId ? { ...item, ...data } : item,
+              ),
+            };
+          }
+          return inspection;
+        });
 
       setInspections(updatedInspections);
 
@@ -110,23 +117,26 @@ const InspectionWorkflow: React.FC = () => {
 
   const completeInspection = async (inspectionId: string) => {
     try {
-      if (isOffline) {
-        queueAction("completeInspection", { inspectionId });
+        if (isOffline) {
+          queueAction({
+            type: "completeInspection",
+            payload: { inspectionId },
+          });
         // Update UI optimistically
         return;
       }
 
       await inspectionService.completeInspection(inspectionId);
       // Update local state
-      const updatedInspections = inspections.map((inspection) =>
-        inspection.id === inspectionId
-          ? {
-              ...inspection,
-              status: "completed",
-              completedAt: new Date().toISOString(),
-            }
-          : inspection,
-      );
+        const updatedInspections: Inspection[] = inspections.map((inspection): Inspection =>
+          inspection.id === inspectionId
+            ? {
+                ...inspection,
+                status: "completed",
+                completedAt: new Date().toISOString(),
+              }
+            : inspection,
+        );
 
       setInspections(updatedInspections);
 
@@ -148,8 +158,11 @@ const InspectionWorkflow: React.FC = () => {
     finding: Partial<InspectionFinding>,
   ) => {
     try {
-      if (isOffline) {
-        queueAction("addFinding", { inspectionId, itemId, finding });
+        if (isOffline) {
+          queueAction({
+            type: "addFinding",
+            payload: { inspectionId, itemId, finding },
+          });
         // Update UI optimistically
         return;
       }

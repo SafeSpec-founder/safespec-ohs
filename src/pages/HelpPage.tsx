@@ -296,7 +296,7 @@ const HelpPage: React.FC = () => {
             </Typography>
 
             <AIChatInterface
-              contextType="help"
+              contextType="general"
               placeholder="Ask me anything about SafeSpec OHS..."
               fullHeight={true}
             />
