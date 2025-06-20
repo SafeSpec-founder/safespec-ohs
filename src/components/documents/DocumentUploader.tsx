@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from "@store/index";
 import {
   uploadDocumentFile,
   createDocument,
+  updateDocument,
 } from "@store/slices/documentSlice";
 import { selectUser } from "@store/slices/authSlice";
 
@@ -46,6 +47,14 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({
   const [isUploading, setIsUploading] = React.useState<boolean>(false);
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (document) {
+      setTitle(document.title || "");
+      setDescription(document.description || "");
+      setCategory(document.category || "");
+    }
+  }, [document]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -82,7 +91,7 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({
   };
 
   const handleUpload = async () => {
-    if (!file || !title || !category) {
+    if ((!document && !file) || !title || !category) {
       setError("Please fill in all required fields and select a file");
       return;
     }
@@ -92,8 +101,26 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 
     try {
       if (document) {
-        // If we have a document, upload file to existing document
-        await dispatch(uploadDocumentFile({ id: document.id, file })).unwrap();
+        // Update document details
+        await dispatch(
+          updateDocument({ id: document.id, data: { title, description, category } })
+        ).unwrap();
+
+        let updated = { ...document, title, description, category } as Document;
+
+        if (file) {
+          const uploadResult = await dispatch(
+            uploadDocumentFile({ id: document.id, file: file as File })
+          ).unwrap();
+          updated = {
+            ...updated,
+            fileUrl: uploadResult.fileUrl,
+            fileType: uploadResult.fileType,
+            fileSize: uploadResult.fileSize,
+          };
+        }
+
+        onDocumentCreated && onDocumentCreated(updated);
       } else if (onDocumentCreated) {
         // Create a new document first to obtain a real ID
         const newDocData = {
@@ -109,7 +136,7 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 
         let created = await dispatch(createDocument(newDocData)).unwrap();
         const uploadResult = await dispatch(
-          uploadDocumentFile({ id: created.id, file }),
+          uploadDocumentFile({ id: created.id, file: file as File }),
         ).unwrap();
 
         created = {
@@ -250,7 +277,7 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({
         color="primary"
         fullWidth
         onClick={handleUpload}
-        disabled={!file || !title || !category || isUploading}
+        disabled={isUploading || !title || !category || (!document && !file)}
         startIcon={<CloudUploadIcon />}
       >
         {isUploading ? "Uploading..." : "Upload Document"}
