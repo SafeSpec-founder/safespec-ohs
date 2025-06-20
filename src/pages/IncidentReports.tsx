@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext"; // Assuming AuthContext is available
 import { useToast } from "../contexts/ToastContext"; // Assuming ToastContext is available
+import { incidentService } from "@services/incidentService";
+import { jsPDF } from "jspdf";
 
 interface Incident {
   id: string;
@@ -95,36 +97,52 @@ const IncidentReports: React.FC = () => {
   });
 
   // Handle download functionality
-  const handleDownload = (incidentId: string): void => {
-    const incident = incidents.find((i) => i.id === incidentId);
-    if (incident) {
+  const handleDownload = async (incidentId: string): Promise<void> => {
+    try {
       addToast({
         type: "info",
         title: "Generating Report",
-        message: `Preparing PDF for incident ${incident.title}...`,
+        message: "Fetching incident details...",
       });
-      // Simulate PDF generation
-      setTimeout(() => {
-        const blob = new Blob(
-          [
-            `Incident Report\n------------------\nID: ${incident.id}\nTitle: ${incident.title}\nLocation: ${incident.location}\nDate: ${incident.date}\nSeverity: ${incident.severity}\nStatus: ${incident.status}\n\nDetails: [Placeholder for full report details]`,
-          ],
-          { type: "application/pdf" },
-        );
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `Incident_Report_${incident.id}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        addToast({
-          type: "success",
-          title: "Report Downloaded",
-          message: `PDF for incident ${incident.title} downloaded.`,
-        });
-      }, 1000);
+
+      const incident = await incidentService.getIncidentById(incidentId);
+
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.text("Incident Report", 14, 20);
+
+      doc.setFontSize(11);
+      doc.setTextColor(100);
+      doc.text(`ID: ${incident.id}`, 14, 30);
+      doc.text(`Title: ${incident.title}`, 14, 36);
+      doc.text(`Location: ${incident.location}`, 14, 42);
+      doc.text(`Date: ${incident.date}`, 14, 48);
+      doc.text(`Severity: ${incident.severity}`, 14, 54);
+      doc.text(`Status: ${incident.status}`, 14, 60);
+
+      doc.setLineWidth(0.5);
+      doc.line(14, 66, 196, 66);
+
+      doc.setFontSize(12);
+      doc.setTextColor(0);
+      const details = incident.description || "No details provided.";
+      const wrapped = doc.splitTextToSize(details, 180);
+      doc.text(wrapped, 14, 74);
+
+      doc.save(`Incident_Report_${incident.id}.pdf`);
+
+      addToast({
+        type: "success",
+        title: "Report Downloaded",
+        message: `PDF for incident ${incident.title} downloaded.`,
+      });
+    } catch (error) {
+      console.error("Failed to generate incident report:", error);
+      addToast({
+        type: "error",
+        title: "Download Failed",
+        message: "Could not generate the PDF report.",
+      });
     }
   };
 
