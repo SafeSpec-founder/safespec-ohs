@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { logger } from "../utils/logger";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../contexts/ToastContext"; // Assuming ToastContext is in components
+import { procedureService } from "../services/procedureService";
 
 const AddProcedureForm: React.FC = () => {
   const navigate = useNavigate();
@@ -12,16 +13,23 @@ const AddProcedureForm: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Placeholder categories - fetch from backend in real app
-  const categories = [
-    "Emergency Response",
-    "Hazardous Materials",
-    "Equipment Safety",
-    "Personal Safety",
-    "Workplace Safety",
-    "Reporting",
-    "Other",
-  ];
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    procedureService
+      .getCategories()
+      .then((data) => {
+        setCategories(data);
+      })
+      .catch((error) => {
+        console.error("Failed to load procedure categories", error);
+        addToast({
+          type: "error",
+          title: "Error",
+          message: "Unable to load categories.",
+        });
+      });
+  }, [addToast]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
