@@ -19,7 +19,8 @@ export interface Notification {
     | "compliance"
     | "incident"
     | "audit"
-    | "reminder";
+    | "reminder"
+    | "task";
 }
 
 export interface NotificationState {
