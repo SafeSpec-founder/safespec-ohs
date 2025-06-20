@@ -99,7 +99,7 @@ const NotificationsPage: React.FC = () => {
             variant="contained"
             startIcon={<DoneAllIcon />}
             onClick={handleMarkAllAsRead}
-            disabled={!notifications.some((notification) => !notification.read)}
+            disabled={!notifications.notifications.some((notification) => !notification.read)}
           >
             Mark All as Read
           </Button>
@@ -115,21 +115,21 @@ const NotificationsPage: React.FC = () => {
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab label={`All (${notifications.length})`} {...a11yProps(0)} />
+            <Tab label={`All (${notifications.notifications.length})`} {...a11yProps(0)} />
             <Tab
-              label={`Unread (${notifications.filter((notification) => !notification.read).length})`}
+              label={`Unread (${notifications.notifications.filter((notification) => !notification.read).length})`}
               {...a11yProps(1)}
             />
             <Tab
-              label={`Incidents (${notifications.filter((notification) => notification.type === "incident").length})`}
+              label={`Incidents (${notifications.notifications.filter((notification) => notification.category === "incident").length})`}
               {...a11yProps(2)}
             />
             <Tab
-              label={`Tasks (${notifications.filter((notification) => notification.type === "task").length})`}
+              label={`Tasks (${notifications.notifications.filter((notification) => notification.category === "reminder").length})`}
               {...a11yProps(3)}
             />
             <Tab
-              label={`System (${notifications.filter((notification) => notification.type === "system").length})`}
+              label={`System (${notifications.notifications.filter((notification) => notification.category === "system").length})`}
               {...a11yProps(4)}
             />
           </Tabs>
@@ -164,9 +164,9 @@ const NotificationsList: React.FC<NotificationsListProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const handleMarkAsRead = (id: string) => {
-    dispatch(markAsRead({ id }));
-  };
+    const handleMarkAsRead = (id: string) => {
+      dispatch(markAsRead(id));
+    };
 
   if (notifications.length === 0) {
     return (

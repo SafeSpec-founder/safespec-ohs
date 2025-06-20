@@ -323,7 +323,7 @@ export const useOfflineSync = (
 ) => {
   const isOnline = useOnlineStatus();
   const [isSyncing, setIsSyncing] = useState(false);
-  const [lastSyncTime, setLastSyncTime] = useState(null);
+  const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
   const [pendingChanges, setPendingChanges] = useState<any[]>([]);
 
   // Load pending changes from IndexedDB

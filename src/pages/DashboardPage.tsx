@@ -53,11 +53,7 @@ const DashboardPage: React.FC = () => {
       <Grid container spacing={3}>
         {/* Safety Score */}
         <Grid item xs={12} md={6} lg={3}>
-          <SafetyScoreCard
-            score={85}
-            trend={+5}
-            lastUpdated={new Date().toISOString()}
-          />
+          <SafetyScoreCard overallScore={85} />
         </Grid>
 
         {/* Incident Summary */}
@@ -250,7 +246,7 @@ const DashboardPage: React.FC = () => {
             <Typography variant="h6" gutterBottom>
               Recent Incidents
             </Typography>
-            <RecentIncidentsTable incidents={incidents.slice(0, 5)} />
+            <RecentIncidentsTable incidents={incidents.slice(0, 5) as any} />
           </Paper>
         </Grid>
 
@@ -260,7 +256,7 @@ const DashboardPage: React.FC = () => {
             <Typography variant="h6" gutterBottom>
               Upcoming Actions
             </Typography>
-            <UpcomingActionsTable actions={correctiveActions.slice(0, 5)} />
+            <UpcomingActionsTable actions={correctiveActions.slice(0, 5) as any} />
           </Paper>
         </Grid>
 

@@ -12,7 +12,6 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@contexts/AuthContext";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import AuthLayout from "@layouts/AuthLayout";
 
 const RegisterPage: React.FC = () => {
   const { register } = useAuth();
@@ -57,12 +56,11 @@ const RegisterPage: React.FC = () => {
   });
 
   return (
-    <AuthLayout title="Sign up">
-      <Box
-        component="form"
-        onSubmit={formik.handleSubmit}
-        noValidate
-        sx={{ mt: 1, width: "100%" }}
+    <Box
+      component="form"
+      onSubmit={formik.handleSubmit}
+      noValidate
+      sx={{ mt: 1, width: "100%" }}
       >
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
@@ -176,7 +174,6 @@ const RegisterPage: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-    </AuthLayout>
   );
 };
 
